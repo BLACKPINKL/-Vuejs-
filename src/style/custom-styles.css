@@ -397,7 +397,7 @@ font-size: 24px;
 font-weight: 700;
 text-transform: uppercase;
 line-height: 30px;
-background: #283643;
+background: #283643 !important;
 }
 .navbar-brand b{
 color: #4BD28C;

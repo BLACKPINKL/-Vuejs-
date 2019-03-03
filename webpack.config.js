@@ -77,10 +77,10 @@ let config = {
       router: path.resolve(__dirname, 'src/router'),
       service: path.resolve(__dirname, 'src/service'),
       pages: path.resolve(__dirname, 'src/pages'),
-      static: path.resolve(__dirname, 'src/static'),
-      layout: path.resolve(__dirname, 'src/layout')
+      static: path.resolve(__dirname, 'static'),
+      style: path.resolve(__dirname, 'src/style')
     },
-    extensions: ['.js', '.vue', '.json']
+    extensions: ['.js', '.vue']
   },
   optimization: {
    runtimeChunk: false,
@@ -106,7 +106,7 @@ let config = {
           canPrint: true
     }),
     new HtmlWebpackPlugin({
-        template: './src/index.html',
+        template: path.resolve(__dirname, 'index.html'),
         filename: 'index.html',
         minify: {
           collapseWhitespace: true,
