@@ -21,13 +21,15 @@
                       <li><a href="javascript:;"><i class="fa fa-gear fa-fw"></i> Settings</a>
                       </li>
                       <li class="divider"></li>
-                      <li><router-link to="/login"><i class="fa fa-sign-out fa-fw"></i> Logout</router-link>
+                      <li><a href="javascript:;" @click="handleModal"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
                       </li>
                   </ul>
                   <!-- /.dropdown-user -->
               </li>
               <!-- /.dropdown -->
           </ul>
+          <!-- 模态框 -->
+          <v-dialog />
       </nav>
 </template>
 
@@ -39,7 +41,30 @@
       }
     },
     methods: {
-
+      handleModal() {
+        this.$modal.show('dialog', {
+          title: 'SIGN OUT',
+          text: '确定退出登录？',
+          buttons: [
+            {
+              title: 'Logout',
+              default: true,
+              handler: () => { this.logout() }
+            },
+            {
+              title: 'Close',
+              handler: () => { this.hide() }
+            }
+          ]
+        })
+      },
+      hide() {
+        this.$modal.hide('dialog')
+      },
+      logout() {
+        this.$router.push('login')
+        this.hide()
+      }
     }
   }
 </script>

@@ -18,12 +18,11 @@ let config = {
     rules: [
       {
         test: /\.js$/,
-        exclude: /node_modules/,
-        loader: "babel-loader"
+        loader: "babel-loader",
+        exclude: /node_modules/
       },
       {
         test: /\.vue$/,
-        exclude: /node_modules/,
         loader: "vue-loader"
       },
       {
@@ -122,6 +121,16 @@ let config = {
     hot: true,
     historyApiFallback: {
       index: '/dist/index.html'
+    },
+    proxy : {
+      '/manage' : {
+          target: 'http://adminv2.happymmall.com',
+          changeOrigin : true
+      },
+      '/user/logout.do' : {
+          target: 'http://adminv2.happymmall.com',
+          changeOrigin : true
+      }
     }
   }
 }
