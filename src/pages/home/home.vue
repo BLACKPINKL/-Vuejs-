@@ -1,8 +1,14 @@
 <template>
   <div class="home">
-    this is home
-    <v-chart :options="userCount"></v-chart>
+    <div class="col-md-6">
+      <v-chart :options="userCount"></v-chart>
+    </div>
+    <div class="col-md-6">
     <v-chart :options="goodsCount"></v-chart>
+    </div>
+    <div class="col-md-6">
+    <v-chart :options="orderCount"></v-chart>
+    </div>
   </div>
 </template>
 
@@ -14,7 +20,8 @@ import 'echarts/lib/component/legend'
 // 饼图
 import 'echarts/lib/chart/pie'
 import 'echarts/lib/component/visualMap'
-
+// 折线图
+import 'echarts/lib/chart/line'
   export default {
     data() {
       return {
@@ -77,13 +84,13 @@ import 'echarts/lib/component/visualMap'
           ]
         },
         goodsCount: {
-          backgroundColor: '#2c343c',
+          backgroundColor: '#fff',
           title: {
-              text: 'Customized Pie',
+              text: '商品销售统计',
               left: 'center',
               top: 20,
               textStyle: {
-                  color: '#ccc'
+                  color: '#000'
               }
           },
 
@@ -102,14 +109,14 @@ import 'echarts/lib/component/visualMap'
           },
           series : [
               {
-                  name:'访问来源',
+                  name:'商品购买来源',
                   type:'pie',
                   radius : '55%',
                   center: ['50%', '50%'],
                   data:[
-                      {value:335, name:'直接访问'},
-                      {value:310, name:'邮件营销'},
-                      {value:274, name:'联盟广告'},
+                      {value:335, name:'直接购物'},
+                      {value:310, name:'海外代购'},
+                      {value:274, name:'微商推销'},
                       {value:235, name:'视频广告'},
                       {value:400, name:'搜索引擎'}
                   ].sort(function (a, b) { return a.value - b.value; }),
@@ -117,14 +124,14 @@ import 'echarts/lib/component/visualMap'
                   label: {
                       normal: {
                           textStyle: {
-                              color: 'rgba(255, 255, 255, 0.3)'
+                              color: '#000'
                           }
                       }
                   },
                   labelLine: {
                       normal: {
                           lineStyle: {
-                              color: 'rgba(255, 255, 255, 0.3)'
+                              color: '#283643'
                           },
                           smooth: 0.2,
                           length: 10,
@@ -146,22 +153,37 @@ import 'echarts/lib/component/visualMap'
                   }
               }
           ]
+        },
+        orderCount: {
+          title: {
+            text: '订单总数'
+          },
+          tooltip: {
+           trigger: 'axis'
+          },
+          xAxis: {
+            type: 'category',
+            data: ['周一','周二','周三','周四','周五','周六','周日']
+          },
+          yAxis: {
+            type: 'value'
+          },
+          series: [{
+            data: [820, 932, 901, 934, 1290, 1330, 1320],
+            type: 'line',
+            smooth: true
+          }]
         }
       }
-    },
-    created() {
-      this.axios.get('/manage/statistic/base_count.do').then((res)=>{
-        console.log(res.data)
-      })
-    },
-    methods: {
-
     }
   }
 </script>
 
 <style lang="less">
   .echarts {
-    width: 500px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+    margin-top: 30px;
   }
 </style>

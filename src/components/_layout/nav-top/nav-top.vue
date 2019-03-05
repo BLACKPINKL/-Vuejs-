@@ -34,7 +34,10 @@
 </template>
 
 <script>
+import common from 'utils/common'
+import user from 'service/user-service'
   export default {
+    mixins: [common, user],
     data() {
       return {
 
@@ -42,28 +45,30 @@
     },
     methods: {
       handleModal() {
-        this.$modal.show('dialog', {
+        this.modalShow('dialog', {
           title: 'SIGN OUT',
           text: '确定退出登录？',
           buttons: [
             {
               title: 'Logout',
               default: true,
-              handler: () => { this.logout() }
+              handler: () => { this.handlerLogout() }
             },
             {
               title: 'Close',
-              handler: () => { this.hide() }
+              handler: () => { this.modalHide('dialog') }
             }
           ]
         })
       },
-      hide() {
-        this.$modal.hide('dialog')
-      },
-      logout() {
-        this.$router.push('login')
-        this.hide()
+      handlerLogout() {
+        this.logout().then((res) => {
+          this.modalHide('dialog')
+          this.doLogin()
+        })
+        .catch((err) => {
+          alert(err.msg)
+        })
       }
     }
   }

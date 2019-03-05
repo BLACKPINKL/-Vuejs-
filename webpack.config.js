@@ -77,7 +77,8 @@ let config = {
       service: path.resolve(__dirname, 'src/service'),
       pages: path.resolve(__dirname, 'src/pages'),
       static: path.resolve(__dirname, 'static'),
-      style: path.resolve(__dirname, 'src/style')
+      style: path.resolve(__dirname, 'src/style'),
+      utils: path.resolve(__dirname, 'src/utils')
     },
     extensions: ['.js', '.vue']
   },
