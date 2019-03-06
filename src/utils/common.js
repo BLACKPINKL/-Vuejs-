@@ -16,7 +16,7 @@ let Common = {
           }else if(res.data.status === 10) {
             this.doLogin()
           }else {
-            reject(res.data)
+            typeof reject === 'function' && reject(res.data)
           }
         })
         .catch((err) => {
@@ -35,6 +35,22 @@ let Common = {
     },
     modalShow(name, op) {
       this.$modal.show(name, op)
+    },
+    setLocalStorage(name = 'userInfo', data) {
+      if (!data) {
+        throw 'data is not definded'
+      }
+      window.localStorage.setItem(name, JSON.stringify(data))
+    },
+    getLocalStorage(name = 'userInfo') {
+      return JSON.parse(window.localStorage.getItem(name)) || ''
+    },
+    removeLocalStorage(name = 'userInfo') {
+      if (this.getLocalStorage(name)) {
+        window.localStorage.removeItem(name)
+      }else {
+        throw 'name is not definded'
+      }
     }
   }
 }

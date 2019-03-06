@@ -40,6 +40,14 @@ let user = {
       result.status = true
       result.msg = '验证通过'
       return result
+    },
+    // 获取用户列表
+    userList(page) {
+      return this.request({
+        url: '/manage/user/list.do',
+        method: 'post',
+        data: page
+      })
     }
   }
 }

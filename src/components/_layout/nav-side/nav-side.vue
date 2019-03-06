@@ -3,7 +3,15 @@
   <nav :class="[navbarDefault, navbarSide, { navbarClosed: isClosed }]">
     <div id="sideNav" @click="handleClosed" :class="{ closed: isClosed }"><i class="fa fa-caret-right"></i></div>
       <div class="sidebar-collapse">
+          <div class="user-info">
+            <img class="user-head" src="/static/userHead.jpg" alt="admin">
+            <div class="user-body">
+              <p class="user-name">{{ username }}</p>
+              <p class="user-msg">Frontend Developer</p>
+            </div>
+          </div>
           <ul class="nav" id="main-menu">
+
               <li v-for="(item, index) in items" :key="index">
                   <router-link :to='item.path'>
                     <i :class="item.iconClassname"></i> {{ item.link }}</router-link>
@@ -29,9 +37,12 @@
 </template>
 
 <script>
+import common from 'utils/common'
 export default {
+  extends: common,
   data() {
     return {
+      username: '',
       items: [
         { path: '/home', link: '首页', iconClassname: 'fa fa-home' },
         { path: '/order', link: '订单', iconClassname: 'fa fa-list-alt' },
@@ -42,6 +53,10 @@ export default {
       navbarSide : 'navbar-side',
       navbarClosed: 'navbar-closed'
     }
+  },
+  created() {
+    //do something after creating vue instance
+    this.username = this.getLocalStorage().username
   },
   methods: {
     hadelActive(e) {
@@ -60,3 +75,33 @@ export default {
   }
 }
 </script>
+
+<style lang="less">
+  .user-info {
+    padding: 10px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    -webkit-box-align: center;
+    .user-head {
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      margin-right: 15px;
+    }
+    .user-body {
+      p {
+        line-height: 1.7;
+        color: #fff;
+        padding: 0;
+        margin: 0;
+      }
+      .user-name {
+        font-size: 17px;
+      }
+      .user-msg {
+        font-size: 15px;
+      }
+    }
+  }
+</style>

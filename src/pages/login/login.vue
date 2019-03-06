@@ -50,7 +50,8 @@ import user from 'service/user-service'
             vaildate = this.checkLogin(userInfo)
         if (vaildate.status) {
           this.login(userInfo).then((res) => {
-            // console.log(res);
+            console.log(res);
+            this.setLocalStorage('userInfo', res.data)
             this.modalShow('dialog', {
               title: vaildate.msg,
                 text: '欢迎登录 - BLACKPINK',
@@ -93,7 +94,7 @@ import user from 'service/user-service'
           })
         }
       }
-      
+
     }
   }
 </script>

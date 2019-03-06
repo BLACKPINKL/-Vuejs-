@@ -534,6 +534,7 @@ border:0px solid black;
 }
 .navbar-header {
     background: transparent;
+    border-bottom: 1px solid rgba(0,0,0,0.6);
 }
 
 .nav > li > a > i {

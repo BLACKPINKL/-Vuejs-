@@ -63,6 +63,7 @@ import user from 'service/user-service'
       },
       handlerLogout() {
         this.logout().then((res) => {
+          this.removeLocalStorage()
           this.modalHide('dialog')
           this.doLogin()
         })
