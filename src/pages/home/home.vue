@@ -140,7 +140,7 @@ import 'echarts/lib/chart/line'
                   },
                   itemStyle: {
                       normal: {
-                          color: '#c23531',
+                          color: '',
                           shadowBlur: 200,
                           shadowColor: 'rgba(0, 0, 0, 0.5)'
                       }
