@@ -42,7 +42,7 @@ let user = {
       return result
     },
     // 获取用户列表
-    userList(page) {
+    getUserList(page) {
       return this.request({
         url: '/manage/user/list.do',
         method: 'post',

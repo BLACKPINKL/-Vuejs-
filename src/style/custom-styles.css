@@ -44,6 +44,9 @@ h2 {
 h4 {
     padding-top:10px;
 }
+.table-hover>tbody>tr:hover {
+    background-color: rgba(0, 0, 0, 0.075);
+}
 .square-btn-adjust {
     border: 0px solid transparent;
    -webkit-border-radius: 0px;

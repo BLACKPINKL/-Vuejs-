@@ -78,11 +78,12 @@ export default {
 
 <style lang="less">
   .user-info {
-    padding: 10px;
-    margin-bottom: 15px;
+    padding: 10px 10px 25px;
+    // margin-bottom: 15px;
     display: flex;
     align-items: center;
     -webkit-box-align: center;
+    border-bottom: 1px solid rgba(107,108,109,.19);
     .user-head {
       border-radius: 50%;
       width: 50px;

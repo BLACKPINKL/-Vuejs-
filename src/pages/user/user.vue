@@ -6,8 +6,7 @@
           <div class="col-sm-6">
             <label class="page-option">
               Show
-              <select class="form-control input-sm">
-                <option value="5">5</option>
+              <select @input="setPageSize" class="form-control input-sm">
                 <option value="10">10</option>
                 <option value="15">15</option>
                 <option value="20">20</option>
@@ -15,12 +14,11 @@
               entries
             </label>
           </div>
-          <div class="col-sm-6">456</div>
         </div>
         <div class="row">
           <div class="col-sm-12">
             <div class="table-responsive">
-              <table class="table table-bordered dataTable no-footer">
+              <table class="table table-bordered table-hover dataTable no-footer">
                 <thead>
                   <tr>
                     <th>ID</th>
@@ -44,13 +42,20 @@
           </div>
         </div>
         <div class="row">
-          <uib-pagination
-           :total-items="bigTotalItems"
-           v-model="pagination2"
-           :max-size="maxSize"
-           class="pagination-md"
-           :boundary-link-numbers="true">
-            </uib-pagination>
+          <div class="col-sm-12">
+            <div class="pagination-box">
+            <uib-pagination
+            :totalItems="totalItems"
+            :items-per-page="5"
+            v-model="pagination"
+            :max-size="maxSize"
+            class="pagination-md"
+            :boundary-links="true"
+            :force-ellipses="true"
+            @change="pageChanged">
+           </uib-pagination>
+           </div>
+          </div>
         </div>
       </div>
     </div>
@@ -67,26 +72,32 @@ import user from 'service/user-service'
     data() {
       return {
         page: {
-          pageSize: 15,
+          pageSize: 10,
           pageNum: 1
         },
         userData: {},
-        totalItems: 64,
-        pagination1: { currentPage: 4 },
-        pagination2: { currentPage: 1 },
-        maxSize: 5,
-        bigTotalItems: 175
+        pagination: {
+          // 点击的那一页
+          currentPage: 1
+        },
+        // 一共显示多少条页码
+        totalItems: 15,
+        // 一页展示多少条数据
+        itemsPage: 10,
+        maxSize: 5
       }
   },
     created() {
       //do something after creating vue instance
-      this.getUserList()
+      this.loadUserList(this.page)
     },
     methods: {
-      getUserList() {
-        this.userList(this.page).then((res) => {
-          console.log(res);
+      loadUserList(page) {
+        this.getUserList(page).then((res) => {
           this.userData = res.data
+          // userData.pages(总页码) => 总数据(this.userData.total) / (一页展示多少条数据)pagesize
+          this.totalItems = this.userData.pages
+          this.itemsPage = this.userData.pageSize
         })
         .catch((err) => {
           this.modalShow('dialog', {
@@ -97,21 +108,22 @@ import user from 'service/user-service'
           })
         })
       },
-      setPage: function(pageNo) {
-        console.log('pageNo', pageNo);
-          this.pagination1.currentPage = pageNo;
-      },
       pageChanged: function() {
-          console.log('Page changed to: ' + this.pagination1.currentPage);
+          this.page.pageNum = this.pagination.currentPage
+          this.loadUserList(this.page)
       },
-      pageLabelHtml: function (pageNo) {
-          return "<b>" + pageNo + "</b>";
+      // select 改变pageSize
+      setPageSize(e) {
+        console.log(e.target.value);
+        this.page.pageSize = e.target.value
+        this.loadUserList(this.page)
       }
     }
   }
 </script>
 
 <style lang="less">
+  @import '../../style/pagination.less';
   .card {
     background-color: #fff;
     border-radius: 4px;
