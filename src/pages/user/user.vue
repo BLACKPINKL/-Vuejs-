@@ -46,7 +46,7 @@
             <div class="pagination-box">
             <uib-pagination
             :totalItems="totalItems"
-            :items-per-page="5"
+            :items-per-page="itemsPage"
             v-model="pagination"
             :max-size="maxSize"
             class="pagination-md"
@@ -80,7 +80,7 @@ import user from 'service/user-service'
           // 点击的那一页
           currentPage: 1
         },
-        // 一共显示多少条页码
+        // 所有页数加起来的项目数
         totalItems: 15,
         // 一页展示多少条数据
         itemsPage: 10,
@@ -95,8 +95,8 @@ import user from 'service/user-service'
       loadUserList(page) {
         this.getUserList(page).then((res) => {
           this.userData = res.data
-          // userData.pages(总页码) => 总数据(this.userData.total) / (一页展示多少条数据)pagesize
-          this.totalItems = this.userData.pages
+          // userData.total(总数据)
+          this.totalItems = this.userData.total
           this.itemsPage = this.userData.pageSize
         })
         .catch((err) => {
@@ -114,7 +114,6 @@ import user from 'service/user-service'
       },
       // select 改变pageSize
       setPageSize(e) {
-        console.log(e.target.value);
         this.page.pageSize = e.target.value
         this.loadUserList(this.page)
       }
