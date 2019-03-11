@@ -30,11 +30,33 @@ let Common = {
     gohome() {
       this.$router.push('home')
     },
-    modalHide(name) {
+    modalHide(name = 'dialog') {
       this.$modal.hide(name)
     },
-    modalShow(name, op) {
-      this.$modal.show(name, op)
+    // 只负责弹出错误信息或成功信息  ( 无操作逻辑 )
+    TipsModal(params) {
+      this.$modal.show(params.name || 'dialog', {
+        title: params.title,
+        text: params.text,
+        buttons: [
+          {
+            title: '关闭',
+            handler: this.modalHide()
+          }
+        ]
+      })
+    },
+    // 带有操作逻辑 点击按钮需要触发事件
+    handleModal(params) {
+      this.$modal.show(params.name || 'dialog', {
+        title: params.title,
+        text: params.text,
+        buttons: params.buttons ||
+        [
+          { title: params.buttonText || '确定', handler: params.handler},
+          { title: '关闭', handler: this.modalHide()}
+        ]
+      })
     },
     setLocalStorage(name = 'userInfo', data) {
       if (!data) {

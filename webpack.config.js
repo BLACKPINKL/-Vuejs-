@@ -79,6 +79,7 @@ let config = {
       static: path.resolve(__dirname, 'static'),
       style: path.resolve(__dirname, 'src/style'),
       utils: path.resolve(__dirname, 'src/utils'),
+      store: path.resolve(__dirname, 'src/store'),
       vue: 'vue/dist/vue.js'
     },
     extensions: ['.js', '.vue']

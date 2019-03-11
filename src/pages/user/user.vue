@@ -46,9 +46,9 @@
             <div class="pagination-box">
             <uib-pagination
             :totalItems="totalItems"
-            :items-per-page="itemsPage"
-            v-model="pagination"
-            :max-size="maxSize"
+            :items-per-page="getItemsPage"
+            v-model="paginationOp"
+            :max-size="5"
             class="pagination-md"
             :boundary-links="true"
             :force-ellipses="true"
@@ -67,56 +67,62 @@
 <script>
 import common from 'utils/common'
 import user from 'service/user-service'
+import {
+  mapState,
+  mapMutations,
+  mapGetters
+} from 'vuex'
   export default {
     mixins: [common, user],
     data() {
       return {
-        page: {
-          pageSize: 10,
-          pageNum: 1
-        },
         userData: {},
-        pagination: {
-          // 点击的那一页
+        paginationOp: {
           currentPage: 1
-        },
-        // 所有页数加起来的项目数
-        totalItems: 15,
-        // 一页展示多少条数据
-        itemsPage: 10,
-        maxSize: 5
+        }
       }
-  },
+    },
     created() {
       //do something after creating vue instance
       this.loadUserList(this.page)
+      // console.log(this.aaa);
+      // console.log(this.getItemsPage);
     },
     methods: {
       loadUserList(page) {
         this.getUserList(page).then((res) => {
           this.userData = res.data
           // userData.total(总数据)
-          this.totalItems = this.userData.total
-          this.itemsPage = this.userData.pageSize
+          // this.totalItems = this.userData.total
+          // this.itemsPage = this.userData.pageSize
+          this.setPage({
+            total: this.userData.total,
+            pageSize: this.userData.pageSize
+          })
+          console.log(this.page);
         })
         .catch((err) => {
-          this.modalShow('dialog', {
-            text: err.msg,
-            buttons: [
-              { title: '确定', handler: () => this.modalHide() }
-            ]
+          this.TipsModal({
+            text: err.msg || err.statusText
           })
         })
       },
       pageChanged: function() {
-          this.page.pageNum = this.pagination.currentPage
+        console.log(this.paginationOp.currentPage);
+          this.setCurrentPage(this.paginationOp.currentPage)
           this.loadUserList(this.page)
       },
       // select 改变pageSize
       setPageSize(e) {
-        this.page.pageSize = e.target.value
+        this.setPageSize(e.target.value)
         this.loadUserList(this.page)
-      }
+      },
+      ...mapMutations(['setPage', 'setCurrentPage'])
+    },
+    computed: {
+      // ...mapState(),
+      ...mapState(['page', 'setPageSize', 'totalItems']),
+      ...mapGetters(['getItemsPage', 'getPageNum'])
     }
   }
 </script>

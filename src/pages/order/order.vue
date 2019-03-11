@@ -89,11 +89,8 @@ export default {
         this.itemsPage = this.tableData.pageSize
       })
       .catch((err) => {
-        this.modalShow('dialog', {
-          text: err.msg || err.statusText,
-          buttons: [
-            { title: '确定', handler: ()=> this.modalHide('dialog') }
-          ]
+        this.TipsModal({
+          text: err.msg || err.statusText
         })
       })
     },
@@ -104,11 +101,8 @@ export default {
         this.itemsPage = this.tableData.pageSize
       })
       .catch((err) => {
-        this.modalShow('dialog', {
-          text: err.msg || err.statusText,
-          buttons: [
-            { title: '确定', handler: () => this.modalHide('dialog') }
-          ]
+        this.TipsModal({
+          text: err.msg || err.statusText
         })
       })
     },

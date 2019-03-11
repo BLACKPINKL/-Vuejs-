@@ -21,7 +21,10 @@
                       <li><a href="javascript:;"><i class="fa fa-gear fa-fw"></i> Settings</a>
                       </li>
                       <li class="divider"></li>
-                      <li><a href="javascript:;" @click="handleModal"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                      <li>
+                        <a @click.prevent="userLogout">
+                          <i class="fa fa-sign-out fa-fw"></i> Logout
+                        </a>
                       </li>
                   </ul>
                   <!-- /.dropdown-user -->
@@ -44,31 +47,27 @@ import user from 'service/user-service'
       }
     },
     methods: {
-      handleModal() {
-        this.modalShow('dialog', {
+      userLogout() {
+        let that = this
+        this.handleModal({
           title: 'SIGN OUT',
           text: '确定退出登录？',
-          buttons: [
-            {
-              title: 'Logout',
-              default: true,
-              handler: () => { this.handlerLogout() }
-            },
-            {
-              title: 'Close',
-              handler: () => { this.modalHide('dialog') }
-            }
-          ]
+          buttonText: '退出',
+          handler() {
+            that.handlerLogout()
+          }
         })
       },
       handlerLogout() {
         this.logout().then((res) => {
           this.removeLocalStorage()
-          this.modalHide('dialog')
+          this.modalHide()
           this.doLogin()
         })
         .catch((err) => {
-          alert(err.msg)
+          this.TipsModal({
+            text: err.statusText || err.msg
+          })
         })
       }
     }

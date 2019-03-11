@@ -53,11 +53,8 @@ export default {
         this.orderDeatilData = res.data
       })
       .catch((err) => {
-        this.modalShow('dialog', {
-          text: err.msg || err.statusText,
-          buttons: [
-            { title: '确定', handler: () => this.modalHide('dialog') }
-          ]
+        this.TipsModal({
+          text: err.msg || err.statusText
         })
       })
     }

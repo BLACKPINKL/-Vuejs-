@@ -47,49 +47,30 @@ import user from 'service/user-service'
             username: this.username,
             password: this.password
           },
-            vaildate = this.checkLogin(userInfo)
+            vaildate = this.checkLogin(userInfo),
+            that = this
         if (vaildate.status) {
           this.login(userInfo).then((res) => {
             this.setLocalStorage('userInfo', res.data)
-            this.modalShow('dialog', {
+            this.handleModal({
               title: vaildate.msg,
-                text: '欢迎登录 - BLACKPINK',
-                buttons: [
-                  {
-                    title: '确定',
-                    handler: () => {
-                       this.modalHide('dialog')
-                       this.gohome()
-                     }
-                  }
-                ]
+              text: '欢迎登录 - BLACKPINK',
+              buttons: [
+                { title: '确定', handler(){
+                  that.modalHide()
+                  that.gohome()
+                }}
+              ]
             })
           }).catch((err) => {
-              this.modalShow('dialog', {
-                title: '验证不通过',
-                  text: err.msg,
-                  buttons: [
-                    {
-                      title: '确定',
-                      handler: () => {
-                         this.modalHide('dialog')
-                       }
-                    }
-                  ]
+              this.TipsModal({
+                text: err.msg || err.statusText
               })
           })
         }else {
-          this.modalShow('dialog', {
+          this.TipsModal({
             title: '验证不通过',
-              text: vaildate.msg,
-              buttons: [
-                {
-                  title: '确定',
-                  handler: () => {
-                     this.modalHide('dialog')
-                   }
-                }
-              ]
+            text: vaildate.msg
           })
         }
       }
@@ -99,67 +80,5 @@ import user from 'service/user-service'
 </script>
 
 <style lang="less">
-@themeColor: #1CC09F;
-.login-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 80vh;
-  background-color: @themeColor;
-  .login-box {
-    padding: 40px;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    min-width: 350px;
-    min-height: 390px;
-    box-shadow: 0px 29px 147.5px 102.5px rgba(0, 0, 0, 0.05), 0px 29px 95px 0px rgba(0, 0, 0, 0.16);
-    .login-form .login-head{
-      text-align: center;
-      font-size: 23px;
-      color: #000;
-      font-weight: 550;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 20px;
-      margin-bottom: 20px;
-    }
-    .form-group {
-      margin-bottom: 1em;
-      label {
-        display: inline-block;
-        font-size: 13px;
-        font-weight: 600;
-        color: #666;
-        margin-bottom: 0.5em;
-        user-select: none;
-      }
-      .form-control {
-        width: 100%;
-        display: block;
-        padding: 0.375rem 0.75rem;
-        border: 2px solid #ddd;
-        border-radius: 3px;
-        line-height: 1.5;
-        color: #495057;
-        font-size: 0.875rem;
-        background-color: #fff;
-        &:focus {
-          border-color: @themeColor;
-        }
-      }
-      .submit-btn {
-        width: 100%;
-        border: 2px solid transparent;
-        background-color: @themeColor;
-        padding: 0.375rem 0.75rem;
-        line-height: 1.5;
-        color: #fff;
-        font-size: 0.875rem;
-        font-weight: 700;
-      }
-    }
-    .btn-cont {
-      margin-bottom: 0;
-    }
-  }
-}
+@import '../../style/login/login.less';
 </style>
