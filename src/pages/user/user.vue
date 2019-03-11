@@ -6,7 +6,7 @@
           <div class="col-sm-6">
             <label class="page-option">
               Show
-              <select @input="setPageSize" class="form-control input-sm">
+              <select @input="getPageSize" class="form-control input-sm">
                 <option value="10">10</option>
                 <option value="15">15</option>
                 <option value="20">20</option>
@@ -46,7 +46,7 @@
             <div class="pagination-box">
             <uib-pagination
             :totalItems="totalItems"
-            :items-per-page="getItemsPage"
+            :items-per-page="page.pageSize"
             v-model="paginationOp"
             :max-size="5"
             class="pagination-md"
@@ -72,6 +72,7 @@ import {
   mapMutations,
   mapGetters
 } from 'vuex'
+
   export default {
     mixins: [common, user],
     data() {
@@ -83,23 +84,14 @@ import {
       }
     },
     created() {
-      //do something after creating vue instance
       this.loadUserList(this.page)
-      // console.log(this.aaa);
-      // console.log(this.getItemsPage);
     },
     methods: {
       loadUserList(page) {
         this.getUserList(page).then((res) => {
           this.userData = res.data
-          // userData.total(总数据)
-          // this.totalItems = this.userData.total
-          // this.itemsPage = this.userData.pageSize
-          this.setPage({
-            total: this.userData.total,
-            pageSize: this.userData.pageSize
-          })
-          console.log(this.page);
+          // 修改总页数
+          this.setPageTotal(this.userData.total)
         })
         .catch((err) => {
           this.TipsModal({
@@ -108,21 +100,21 @@ import {
         })
       },
       pageChanged: function() {
-        console.log(this.paginationOp.currentPage);
-          this.setCurrentPage(this.paginationOp.currentPage)
+        // 修改当前页码
+        this.setPageNum(this.paginationOp.currentPage)
           this.loadUserList(this.page)
       },
       // select 改变pageSize
-      setPageSize(e) {
+      getPageSize(e) {
         this.setPageSize(e.target.value)
         this.loadUserList(this.page)
       },
-      ...mapMutations(['setPage', 'setCurrentPage'])
+      // 获取修改state数据的方法
+      ...mapMutations(['setPageSize', 'setPageNum', 'setPageTotal'])
     },
     computed: {
-      // ...mapState(),
-      ...mapState(['page', 'setPageSize', 'totalItems']),
-      ...mapGetters(['getItemsPage', 'getPageNum'])
+      // 获取vuex state数据
+      ...mapState(['page', 'totalItems'])
     }
   }
 </script>

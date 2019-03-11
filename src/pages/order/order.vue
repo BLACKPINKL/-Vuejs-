@@ -26,7 +26,7 @@
         <div class="pagination-box" style="text-align: right">
         <uib-pagination
         :totalItems="totalItems"
-        :items-per-page="itemsPage"
+        :items-per-page="page.pageSize"
         v-model="pagination"
         :max-size="5"
         class="pagination-md"
@@ -45,6 +45,11 @@
 import table from 'components/table-list/table-list.vue'
 import common from 'utils/common'
 import order from 'service/order-service'
+import {
+  mapState,
+  mapMutations,
+  mapGetters
+} from 'vuex'
 export default {
   mixins: [common, order],
   components: {
@@ -62,31 +67,19 @@ export default {
       ],
       tableData: {},
       orderNo: '',
-      page: {
-        pageSize: 10,
-        pageNum: 1
-      },
       pagination: {
-        // 点击的那一页
         currentPage: 1
-      },
-      // 一共显示多少条页码
-      totalItems: 15,
-      // 一页展示多少条数据
-      itemsPage: 10
+      }
     }
   },
   created() {
-    //do something after creating vue instance
     this.loadOrderList(this.page)
   },
   methods: {
     loadOrderList(page) {
       this.getOrderList(page).then((res) => {
-        // console.log(res);
         this.tableData = res.data
-        this.totalItems = this.tableData.total
-        this.itemsPage = this.tableData.pageSize
+        this.setPageTotal(this.tableData.total)
       })
       .catch((err) => {
         this.TipsModal({
@@ -97,8 +90,7 @@ export default {
     loadSearchOrder(orderNo) {
       this.getSearchOrder(orderNo).then((res) => {
         this.tableData = res.data
-        this.totalItems = this.tableData.total
-        this.itemsPage = this.tableData.pageSize
+        this.setPageTotal(this.tableData.total)
       })
       .catch((err) => {
         this.TipsModal({
@@ -107,18 +99,23 @@ export default {
       })
     },
     pageChanged() {
-      this.page.pageNum = this.pagination.currentPage
+      this.setPageNum(this.pagination.currentPage)
       this.loadOrderList(this.page)
     },
+    // 搜索订单号
     handlerSearchOrder() {
       if (!this.orderNo) {
-        this.loadOrderList()
+        this.loadOrderList(this.page)
         return
       }
       this.loadSearchOrder({
         orderNo: this.orderNo
       })
-    }
+    },
+    ...mapMutations(['setPageNum', 'setPageTotal'])
+  },
+  computed: {
+    ...mapState(['page', 'totalItems'])
   }
 }
 </script>
