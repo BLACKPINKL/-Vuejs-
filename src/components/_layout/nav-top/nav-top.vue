@@ -22,7 +22,7 @@
                       </li>
                       <li class="divider"></li>
                       <li>
-                        <a @click.prevent="userLogout">
+                        <a href @click.prevent="userLogout">
                           <i class="fa fa-sign-out fa-fw"></i> Logout
                         </a>
                       </li>

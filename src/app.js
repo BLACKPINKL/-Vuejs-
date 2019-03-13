@@ -10,6 +10,8 @@ import App from './App.vue'
 import creatRouter from 'router/router.js'
 import Store from 'store/store.js'
 
+
+
 Vue.use(Router)
 Vue.use(VueAxios, axios)
 Vue.use(VModal, { dialog: true })

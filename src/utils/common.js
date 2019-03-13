@@ -8,7 +8,7 @@ let Common = {
           url: params.url,
           data: qs.stringify(params.data),
           responseType: 'json',
-          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+          headers: params.headers || {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         })
         .then((res) => {
           if (res.data.status === 0) {
@@ -25,7 +25,7 @@ let Common = {
       })
     },
     doLogin() {
-      this.$router.push('login')
+      this.$router.push('/login')
     },
     gohome() {
       this.$router.push('home')
