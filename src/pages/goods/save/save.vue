@@ -1,6 +1,5 @@
 <template>
   <section class="product-save">
-    <!-- TODO: 添加商品页面 -->
     <div class="form-horizontal">
         <div class="card">
           <div class="form-group">
@@ -37,7 +36,7 @@
               </select>
               <select
               v-show="getTwoSelected"
-              v-model="newProductInfo.id"
+              v-model="newProductInfo.categoryId"
               class="form-control cate-select">
                 <option value="" disabled>请选择二级分类</option>
                 <option
@@ -54,7 +53,7 @@
                 <input type="text"
                 class="form-control input-md"
                 id="productPrice"
-                v-model="newProductInfo.price"
+                v-model.number="newProductInfo.price"
                 placeholder="请输入商品价格">
                 <span class="input-group-addon">元</span>
                 </div>
@@ -67,7 +66,7 @@
                 <input type="text"
                 class="form-control input-md"
                 id="productQuantiy"
-                v-model="newProductInfo.stock"
+                v-model.number="newProductInfo.stock"
                 placeholder="请输入商品库存">
                 <span class="input-group-addon">件</span>
               </div>
@@ -90,12 +89,17 @@
           </div>
           <div class="form-group">
             <label for="" class="col-md-2 control-label">商品详情</label>
-            <textarea rows="3" class="form-control"></textarea>
-          </div>
+            <editor
+            :uploadPath="uploadPath"
+            :uploadFileName="uploadFileName"
+            @uploadSuccess="uploadSuccess"
+            :editorUploadImg="editorUploadImg"
+            @getContext="getContext"/>
+        </div>
           <div class="form-group">
             <div class="col-md-12">
               <div style="text-align: center">
-              <button class="btn btn-lg" @click="saveNewGoods">提交</button>
+              <button class="btn btn-lg" @click="submitNewGoods">提交</button>
               </div>
             </div>
           </div>
@@ -108,15 +112,16 @@
 import common from 'utils/common'
 import goods from 'service/goods-service'
 import category from 'service/category-service'
-import VueCoreImageUpload from 'vue-core-image-upload';
+import VueCoreImageUpload from 'vue-core-image-upload'
+import editor from 'components/editor/editor'
 export default {
   mixins: [common, goods, category],
   components: {
-    fileUpload: VueCoreImageUpload
+    fileUpload: VueCoreImageUpload,
+    editor
   },
   data() {
     return {
-      uploadImg: [],
       category: {
         oneCategoryList: [],
         twoCategoryList: []
@@ -125,27 +130,28 @@ export default {
         categoryId: 0,
         name: '',
         subtitle: '',
-        mainImage: '',
-        subImages: '',
+        subImages: [],
         detail: '',
         price: 1,
         stock: 1,
         status: 1,
-        id: 1,
+        parentCategoryId: 0,
       },
       twoSelected: false,
-      fileList: {}
+      uploadPath: '/manage/product/richtext_img_upload.do',
+      uploadFileName: 'upload_file',
+      editorUploadImg: '',
+      uploadImg: []
     }
   },
   created() {
-    this.loadCategoryList(this.newProductInfo.categoryId, 'oneCategoryList')
+    this.loadCategoryList(this.newProductInfo.parentCategoryId, 'oneCategoryList')
   },
   methods: {
     // 图片上传成功
     imageuploaded(res) {
-      console.log(res);
       this.uploadImg.push(res.data.url)
-      console.log(this.uploadImg);
+      this.newProductInfo.subImages.push(res.data.url.replace('http://img.happymmall.com/', ''))
     },
     loadCategoryList(categoryId, cateName) {
       this.getCategoryList(categoryId).then((res) => {
@@ -157,22 +163,58 @@ export default {
         })
       })
     },
-    saveNewGoods() {
+    // 提交表单
+    submitNewGoods() {
       console.log('submit');
+      let subImages = this.joinArr(this.newProductInfo.subImages, ',')
+      let vaildate = this.checkNewGoodsInfo(this.newProductInfo)
+      let that = this
+      if (!vaildate.status) {
+        this.TipsModal({
+          text: vaildate.msg
+        })
+      }else {
+        this.newProductInfo.subImages = subImages
+        this.saveNewGoods(this.newProductInfo).then((res) => {
+          this.handleModal({
+            text: res.data,
+            buttons: [
+              {
+                title: '确定',
+                handler() {
+                  that.$router.push('/goods')
+                  this.modalHide()
+                }
+              }
+            ]
+          })
+        })
+        .catch((err) => {
+          this.TipsModal({
+            text: err || err.msg
+          })
+        })
+      }
     },
     changeSelected(e) {
       if (!e.target.value) {
-        this.newProductInfo.categoryId = 0
+        this.newProductInfo.parentCategoryId = 0
         return
       }
-      this.newProductInfo.categoryId = e.target.value
-      this.loadCategoryList({categoryId: this.newProductInfo.categoryId}, 'twoCategoryList')
+      this.newProductInfo.parentCategoryId = parseInt(e.target.value)
+      this.loadCategoryList({categoryId: this.newProductInfo.parentCategoryId}, 'twoCategoryList')
+    },
+    // 富文本图片上传成功回调
+    uploadSuccess(value) {
+      this.editorUploadImg = value.file_path
+    },
+    getContext(html) {
+      this.newProductInfo.detail = html
     }
-
   },
   computed: {
     getTwoSelected() {
-      return this.newProductInfo.categoryId ? this.twoSelected = true : this.twoSelected = false
+      return this.newProductInfo.parentCategoryId ? this.twoSelected = true : this.twoSelected = false
     }
   }
 }

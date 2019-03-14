@@ -73,6 +73,12 @@ let Common = {
       }else {
         throw 'name is not definded'
       }
+    },
+    joinArr(arr, sign) {
+      if (!arr.length) {
+        return arr
+      }
+      return arr.join(sign)
     }
   }
 }
