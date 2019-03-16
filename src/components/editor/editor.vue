@@ -19,6 +19,14 @@ export default {
       type: String,
       default: ''
     },
+    editorHtml: {
+      type: String,
+      default: ''
+    },
+    disabledEditor: {
+      type: Boolean,
+      default: true
+    },
     uploadSuccess: {
       type: Function
     },
@@ -28,21 +36,28 @@ export default {
   },
   data() {
     return {
-
+      editor: null,
+      html: ''
+    }
+  },
+  watch: {
+    getHtml(val) {
+      // 设置html内容
+      this.editor.txt.html(val)
     }
   },
   mounted() {
     //do something after mounting vue instance
-    let editor = new E(this.$refs.editor),
-        that = this
+    this.editor = new E(this.$refs.editor)
+    let that = this
     // 获取富文本中的html内容
-    editor.customConfig.onchange = (html) => {
+    that.editor.customConfig.onchange = (html) => {
       that.$emit('getContext', html)
     }
     // 富文本 图片上传
-    editor.customConfig.uploadImgServer = that.uploadPath
-    editor.customConfig.uploadFileName = that.uploadFileName
-    editor.customConfig.uploadImgHooks = {
+    that.editor.customConfig.uploadImgServer = that.uploadPath
+    that.editor.customConfig.uploadFileName = that.uploadFileName
+    that.editor.customConfig.uploadImgHooks = {
       // 成功回调
       customInsert(insertImg, result, editor) {
         if (result.success) {
@@ -52,7 +67,14 @@ export default {
         }
       }
     }
-    editor.create()
+    that.editor.create()
+    // 禁用编辑
+    that.editor.$textElem.attr('contenteditable', that.disabledEditor)
+  },
+  computed: {
+    getHtml() {
+      return this.html = this.editorHtml
+    }
   }
 }
 </script>

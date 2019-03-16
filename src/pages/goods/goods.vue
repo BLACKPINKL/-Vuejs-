@@ -32,8 +32,8 @@
           </button>
           </td>
           <td>
-            <router-link class="btn btn-success btn-sm" to="goods/detail">查看</router-link>
-            <router-link class="btn btn-primary btn-sm" to="goods/edit">编辑</router-link>
+            <router-link class="btn btn-success btn-sm" :to="'/goods/detail/' + item.id">查看</router-link>
+            <router-link class="btn btn-primary btn-sm" :to="'/goods/edit/' + item.id">编辑</router-link>
           </td>
         </tr>
       </template>

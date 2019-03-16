@@ -4,7 +4,7 @@
     <div id="sideNav" @click="handleClosed" :class="{ closed: isClosed }"><i class="fa fa-caret-right"></i></div>
       <div class="sidebar-collapse">
           <div class="user-info">
-            <img class="user-head" src="/static/userHead.jpg" alt="admin">
+            <img class="user-head" src="../../../../static/userHead.jpg" alt="admin">
             <div class="user-body">
               <p class="user-name">{{ username }}</p>
               <p class="user-msg">Frontend Developer</p>

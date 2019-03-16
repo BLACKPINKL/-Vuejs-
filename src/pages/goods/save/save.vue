@@ -9,7 +9,8 @@
                 class="form-control input-md"
                 id="productName"
                 v-model.trim="newProductInfo.name"
-                placeholder="请输入商品名称">
+                placeholder="请输入商品名称"
+                :disabled="isDisabled"/>
               </div>
           </div>
           <div class="form-group">
@@ -19,30 +20,36 @@
               class="form-control input-md"
               id="productSub"
               v-model.trim="newProductInfo.subtitle"
-              placeholder="请输入商品描述">
+              placeholder="请输入商品描述"
+              :disabled="isDisabled">
             </div>
           </div>
           <div class="form-group">
             <label class="col-md-2 control-label">所属分类</label>
             <div class="col-md-10">
-              <select class="form-control cate-select" @input="changeSelected">
+              <select class="form-control cate-select"
+              v-model="newProductInfo.parentCategoryId"
+              :disabled="isDisabled">
                 <option value="">请选择一级分类</option>
                 <option
                 :value="item.id"
                 v-for="(item, index) in category.oneCategoryList"
-                :key="index">
+                :key="index"
+                :selected="item.id === newProductInfo.parentCategoryId">
                 {{ item.name }}
               </option>
               </select>
               <select
-              v-show="getTwoSelected"
+              v-show="isTwoSelected"
               v-model="newProductInfo.categoryId"
-              class="form-control cate-select">
+              class="form-control cate-select"
+              :disabled="isDisabled">
                 <option value="" disabled>请选择二级分类</option>
                 <option
                 :value="item1.id"
                 v-for="(item1, index2) in category.twoCategoryList"
-                :key="index2">{{item1.name}}</option>
+                :key="index2"
+                :selected="item1.id === newProductInfo.categoryId">{{item1.name}}</option>
               </select>
             </div>
           </div>
@@ -54,7 +61,8 @@
                 class="form-control input-md"
                 id="productPrice"
                 v-model.number="newProductInfo.price"
-                placeholder="请输入商品价格">
+                placeholder="请输入商品价格"
+                :disabled="isDisabled">
                 <span class="input-group-addon">元</span>
                 </div>
             </div>
@@ -67,7 +75,8 @@
                 class="form-control input-md"
                 id="productQuantiy"
                 v-model.number="newProductInfo.stock"
-                placeholder="请输入商品库存">
+                placeholder="请输入商品库存"
+                :disabled="isDisabled">
                 <span class="input-group-addon">件</span>
               </div>
             </div>
@@ -80,12 +89,18 @@
             @imageuploaded="imageuploaded"
             url="/manage/product/upload.do"
             inputOfFile="upload_file"
+            v-if="isGoodsDeatil"
             ></file-upload>
-            <img
-            width="80px"
-            height="80px"
-            :src="item"
-            v-for="(item, index) in uploadImg" :key="index">
+            <div
+            class="uploadImgBox"
+            v-for="(item, index) in getUploadImg"
+            :key="index">
+              <img
+              class="uploadImg"
+              :src="newProductInfo.imageHost ? newProductInfo.imageHost + item : item"
+              >
+              <div class="imgMask" @click="removeUploadImg(index)" v-if="isGoodsEdit"><i class="fa fa-close fa-lg"></i></div>
+            </div>
           </div>
           <div class="form-group">
             <label for="" class="col-md-2 control-label">商品详情</label>
@@ -94,9 +109,11 @@
             :uploadFileName="uploadFileName"
             @uploadSuccess="uploadSuccess"
             :editorUploadImg="editorUploadImg"
-            @getContext="getContext"/>
+            :editorHtml="getEditorHtml"
+            @getContext="getContext"
+            :disabledEditor="isGoodsDeatil"/>
         </div>
-          <div class="form-group">
+          <div class="form-group" v-if="isGoodsDeatil">
             <div class="col-md-12">
               <div style="text-align: center">
               <button class="btn btn-lg" @click="submitNewGoods">提交</button>
@@ -141,11 +158,36 @@ export default {
       uploadPath: '/manage/product/richtext_img_upload.do',
       uploadFileName: 'upload_file',
       editorUploadImg: '',
-      uploadImg: []
+      uploadImg: [],
+      editorHtml: '',
+      isGoodsDeatil: true
+    }
+  },
+  watch: {
+    // 监视一级分类id 如果变了 则渲染二级分类
+    'newProductInfo.parentCategoryId': {
+      handler(val, oldVal) {
+        this.loadCategoryList({categoryId: parseInt(val)}, 'twoCategoryList')
+      }
     }
   },
   created() {
-    this.loadCategoryList(this.newProductInfo.parentCategoryId, 'oneCategoryList')
+    // 根据路径进行判断
+    // 如果是 /goods/save 则渲染添加商品页
+    if (this.$route.path == '/goods/save') {
+      this.loadCategoryList(this.newProductInfo.parentCategoryId, 'oneCategoryList')
+    }
+    // 判断是否是编辑页
+    else if(this.$route.path.includes('edit')){
+      this.loadGoodsEdit({productId: this.$route.params.categoryId})
+      this.loadCategoryList(this.newProductInfo.parentCategoryId, 'oneCategoryList')
+    }
+    // 判断是否是详情页
+    else if(this.$route.path.includes('detail')){
+      this.isGoodsDeatil = false
+      this.loadGoodsEdit({productId: this.$route.params.categoryId})
+      this.loadCategoryList(this.newProductInfo.parentCategoryId, 'oneCategoryList')
+    }
   },
   methods: {
     // 图片上传成功
@@ -153,6 +195,7 @@ export default {
       this.uploadImg.push(res.data.url)
       this.newProductInfo.subImages.push(res.data.url.replace('http://img.happymmall.com/', ''))
     },
+    // 渲染select 分类
     loadCategoryList(categoryId, cateName) {
       this.getCategoryList(categoryId).then((res) => {
         this.category[cateName] = res.data
@@ -163,9 +206,21 @@ export default {
         })
       })
     },
+    // 渲染编辑商品页
+    loadGoodsEdit(productId) {
+      this.getGoodsEdit(productId).then((res) => {
+        res.data.isGoodsEdit = true
+        this.newProductInfo = res.data
+        this.newProductInfo.subImages = this.newProductInfo.subImages.split(',')
+      })
+      .catch((err) => {
+        this.TipsModal({
+          text: err.msg || err
+        })
+      })
+    },
     // 提交表单
     submitNewGoods() {
-      console.log('submit');
       let subImages = this.joinArr(this.newProductInfo.subImages, ',')
       let vaildate = this.checkNewGoodsInfo(this.newProductInfo)
       let that = this
@@ -175,6 +230,13 @@ export default {
         })
       }else {
         this.newProductInfo.subImages = subImages
+        // 说明是编辑页面 把没用的字段删除
+        if (this.newProductInfo.isGoodsEdit) {
+          delete this.newProductInfo.mainImage
+          delete this.newProductInfo.createTime
+          delete this.newProductInfo.updateTime
+          delete this.newProductInfo.imageHost
+        }
         this.saveNewGoods(this.newProductInfo).then((res) => {
           this.handleModal({
             text: res.data,
@@ -183,7 +245,7 @@ export default {
                 title: '确定',
                 handler() {
                   that.$router.push('/goods')
-                  this.modalHide()
+                  that.modalHide()
                 }
               }
             ]
@@ -196,40 +258,91 @@ export default {
         })
       }
     },
-    changeSelected(e) {
-      if (!e.target.value) {
-        this.newProductInfo.parentCategoryId = 0
-        return
-      }
-      this.newProductInfo.parentCategoryId = parseInt(e.target.value)
-      this.loadCategoryList({categoryId: this.newProductInfo.parentCategoryId}, 'twoCategoryList')
+    // 删除uploadImg
+    removeUploadImg(index) {
+      this.newProductInfo.subImages.splice(index, 1)
     },
     // 富文本图片上传成功回调
     uploadSuccess(value) {
       this.editorUploadImg = value.file_path
     },
+    // 获取富文本中的html内容
     getContext(html) {
       this.newProductInfo.detail = html
     }
   },
   computed: {
-    getTwoSelected() {
-      return this.newProductInfo.parentCategoryId ? this.twoSelected = true : this.twoSelected = false
+    // 判断一级分类是否被选中 如果选择 返回true
+    isTwoSelected() {
+      return this.newProductInfo.parentCategoryId ?
+      this.twoSelected = true
+      :
+      this.twoSelected = false
+    },
+    // 获取商品上传图片
+    getUploadImg() {
+      return this.uploadImg = this.newProductInfo.subImages
+    },
+    // 获取detail html内容
+    getEditorHtml() {
+      return this.editorHtml = this.newProductInfo.detail
+    },
+    isDisabled() {
+      return this.isGoodsDeatil ? false : true
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
+.fa-close {
+  display: none;
+  color: #fff;
+}
   .form-control {
     width: 100%;
     &:focus {
       border: 1px solid #1cc09f;
+    }
+    &:disabled {
+      cursor: not-allowed;
+    }
+    [readonly] {
+      cursor: not-allowed;
     }
   }
   .cate-select {
     width: 200px;
     display: inline-block;
     margin-right: 15px;
+  }
+  .uploadImgBox {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+
+    .uploadImg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    .imgMask {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      &:hover {
+        cursor: pointer;
+        background-color: rgba(0,0,0,.2);
+        .fa-close {
+          display: block;
+        }
+      }
+    }
   }
 </style>

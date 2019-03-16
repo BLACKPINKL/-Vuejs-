@@ -21,6 +21,13 @@ let goods = {
         data: productOp
       })
     },
+    getGoodsEdit(productId) {
+      return this.request({
+        url: '/manage/product/detail.do',
+        method: 'post',
+        data: productId
+      })
+    },
     checkNewGoodsInfo(newGoodsInfo) {
       let result = {
         msg: '',

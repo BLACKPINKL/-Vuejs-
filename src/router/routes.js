@@ -20,7 +20,8 @@ const routes = [
       { path: '/user', component: user },
       { path: '/goods', component: goods },
       { path: '/goods/save', component: goodsSave },
-      { path: '/goods/detail', component: goodsDetail }
+      { path: '/goods/edit/:categoryId', component: goodsSave },
+      { path: '/goods/detail/:categoryId', component: goodsSave }
     ]
   },
   { path: '/login', component: login, hidden: true }
