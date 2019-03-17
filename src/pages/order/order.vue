@@ -1,7 +1,9 @@
 <template>
   <section class="order">
+    <v-Card>
     <div class="row">
       <div class="col-md-12">
+
         <select class="form-control">
           <option>按订单号查询</option>
         </select>
@@ -36,7 +38,8 @@
        </uib-pagination>
        </div>
       </div>
-    </div>
+      </div>
+    </v-Card>
     <dialog />
   </section>
 </template>

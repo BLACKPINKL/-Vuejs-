@@ -1,18 +1,18 @@
 <template>
   <section class="product-save">
     <div class="form-horizontal">
-        <div class="card">
-          <div class="form-group">
-            <label for="productName" class="col-md-2 control-label">商品名称</label>
-              <div class="col-md-5">
-                <input type="text"
-                class="form-control input-md"
-                id="productName"
-                v-model.trim="newProductInfo.name"
-                placeholder="请输入商品名称"
-                :disabled="isDisabled"/>
-              </div>
-          </div>
+      <v-Card>
+        <div class="form-group">
+          <label for="productName" class="col-md-2 control-label">商品名称</label>
+            <div class="col-md-5">
+              <input type="text"
+              class="form-control input-md"
+              id="productName"
+              v-model.trim="newProductInfo.name"
+              placeholder="请输入商品名称"
+              :disabled="isDisabled"/>
+            </div>
+        </div>
           <div class="form-group">
             <label for="productSub" class="col-md-2 control-label">商品描述</label>
             <div class="col-md-5">
@@ -99,7 +99,7 @@
               class="uploadImg"
               :src="newProductInfo.imageHost ? newProductInfo.imageHost + item : item"
               >
-              <div class="imgMask" @click="removeUploadImg(index)" v-if="isGoodsEdit"><i class="fa fa-close fa-lg"></i></div>
+              <div class="imgMask" @click="removeUploadImg(index)" v-if="isGoodsDeatil"><i class="fa fa-close fa-lg"></i></div>
             </div>
           </div>
           <div class="form-group">
@@ -120,7 +120,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </v-Card>
     </div>
   </section>
 </template>
@@ -160,6 +160,7 @@ export default {
       editorUploadImg: '',
       uploadImg: [],
       editorHtml: '',
+      isGoodsEdit: true,
       isGoodsDeatil: true
     }
   },
@@ -171,6 +172,13 @@ export default {
       }
     }
   },
+  // beforeRouteUpdate(to, from, next) {
+  //   if (to.path.includes('edit') || to.path.includes('detail')) {
+  //     console.log(to,from);
+  //     // next()
+  //   }
+  //
+  // },
   created() {
     // 根据路径进行判断
     // 如果是 /goods/save 则渲染添加商品页
@@ -179,6 +187,7 @@ export default {
     }
     // 判断是否是编辑页
     else if(this.$route.path.includes('edit')){
+      this.isGoodsEdit = true
       this.loadGoodsEdit({productId: this.$route.params.categoryId})
       this.loadCategoryList(this.newProductInfo.parentCategoryId, 'oneCategoryList')
     }
@@ -209,8 +218,9 @@ export default {
     // 渲染编辑商品页
     loadGoodsEdit(productId) {
       this.getGoodsEdit(productId).then((res) => {
-        res.data.isGoodsEdit = true
+        // res.data.isGoodsEdit = true
         this.newProductInfo = res.data
+        // 把保存图片的字段转成数组
         this.newProductInfo.subImages = this.newProductInfo.subImages.split(',')
       })
       .catch((err) => {
@@ -221,17 +231,21 @@ export default {
     },
     // 提交表单
     submitNewGoods() {
+      // 保存图片的字段转成字符串
       let subImages = this.joinArr(this.newProductInfo.subImages, ',')
+      // 校验表单
       let vaildate = this.checkNewGoodsInfo(this.newProductInfo)
       let that = this
       if (!vaildate.status) {
         this.TipsModal({
           text: vaildate.msg
         })
-      }else {
+      }
+      // 校验通过
+      else {
         this.newProductInfo.subImages = subImages
         // 说明是编辑页面 把没用的字段删除
-        if (this.newProductInfo.isGoodsEdit) {
+        if (this.isGoodsEdit) {
           delete this.newProductInfo.mainImage
           delete this.newProductInfo.createTime
           delete this.newProductInfo.updateTime
@@ -287,6 +301,7 @@ export default {
     getEditorHtml() {
       return this.editorHtml = this.newProductInfo.detail
     },
+    // 如果是商品详情页 则禁用表单填写功能
     isDisabled() {
       return this.isGoodsDeatil ? false : true
     }

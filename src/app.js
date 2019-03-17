@@ -9,9 +9,7 @@ import pagination from 'vuejs-uib-pagination'
 import App from './App.vue'
 import creatRouter from 'router/router.js'
 import Store from 'store/store.js'
-
-
-
+import Card from 'components/_layout/card/card'
 Vue.use(Router)
 Vue.use(VueAxios, axios)
 Vue.use(VModal, { dialog: true })
@@ -21,6 +19,13 @@ Vue.use(Vuex)
 const router = creatRouter()
 const store = Store()
 Vue.component('v-chart', Echarts)
+Vue.component('v-Card', Card)
+
+// 全局导航守卫
+router.afterEach((to, from) => {
+  // 设置标题
+  store.state.routerName = to.name
+})
 
 const vm = new Vue({
   render(c) {

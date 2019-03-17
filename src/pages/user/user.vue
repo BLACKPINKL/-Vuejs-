@@ -1,7 +1,7 @@
 <template>
   <section class="row">
     <div class="col-md-12">
-      <div class="card">
+      <v-Card>
         <div class="row">
           <div class="col-sm-6">
             <label class="page-option">
@@ -57,7 +57,7 @@
            </div>
           </div>
         </div>
-      </div>
+      </v-Card>
     </div>
     <!-- 模态框 -->
     <dialog />
@@ -67,6 +67,7 @@
 <script>
 import common from 'utils/common'
 import user from 'service/user-service'
+
 import {
   mapState,
   mapMutations,
@@ -119,25 +120,18 @@ import {
   }
 </script>
 
-<style lang="less">
-  @import '../../style/pagination.less';
-  .card {
-    background-color: #fff;
-    border-radius: 4px;
-    padding: 20px;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
-    .page-option {
-      margin-bottom: 10px;
-      white-space: nowrap;
-      text-align: left;
-      font-weight: normal;
-      font-size: 13px;
-      select {
-        width: 75px;
-        display: inline-block;
-        &:focus {
-          border: 2px solid #1cc09f;
-        }
+<style lang="less" scoped>
+  .page-option {
+    margin-bottom: 10px;
+    white-space: nowrap;
+    text-align: left;
+    font-weight: normal;
+    font-size: 13px;
+    select {
+      width: 75px;
+      display: inline-block;
+      &:focus {
+        border: 2px solid #1cc09f;
       }
     }
   }

@@ -14,17 +14,17 @@ const routes = [
     redirect: '/home',
     component: index,
     children: [
-      { path: '/home', component: home },
-      { path: '/order', component: order},
-      { path: '/order/detail/:orderNo', component: orderDetail, props: true},
-      { path: '/user', component: user },
-      { path: '/goods', component: goods },
-      { path: '/goods/save', component: goodsSave },
-      { path: '/goods/edit/:categoryId', component: goodsSave },
-      { path: '/goods/detail/:categoryId', component: goodsSave }
+      { path: '/home', component: home, name: 'Home' },
+      { path: '/order', component: order, name: 'Order' },
+      { path: '/order/detail/:orderNo', component: orderDetail, name: 'OrderDetail', props: true},
+      { path: '/user', component: user, name: 'User' },
+      { path: '/goods', component: goods, name: 'Goods' },
+      { path: '/goods/save', component: goodsSave, name: 'GoodsSave' },
+      { path: '/goods/edit/:categoryId', component: goodsSave, name: 'GoodsEdit' },
+      { path: '/goods/detail/:categoryId', component: goodsSave, name: 'GoodsDetail' }
     ]
   },
-  { path: '/login', component: login, hidden: true }
+  { path: '/login', component: login, hidden: true, name: 'Login' }
 ]
 
 export default routes

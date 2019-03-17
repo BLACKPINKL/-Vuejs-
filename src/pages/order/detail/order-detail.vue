@@ -1,5 +1,6 @@
 <template>
   <section class="order-detail">
+    <v-Card>
     <div class="row">
       <div class="col-md-12">
         <p>订单号:    {{orderDeatilData.orderNo }}</p>
@@ -22,6 +23,7 @@
         </tr>
       </template>
     </Table>
+    </v-Card>
     <dialog />
   </section>
 </template>

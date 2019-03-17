@@ -133,10 +133,6 @@ let config = {
       '/user/logout.do' : {
           target: 'http://adminv2.happymmall.com',
           changeOrigin : true
-      },
-      '/*' : {
-          target: 'https://cdnjs.com',
-          changeOrigin : true
       }
     }
   }

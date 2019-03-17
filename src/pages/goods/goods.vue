@@ -1,5 +1,6 @@
 <template>
   <section class="goods">
+    <v-Card>
     <!-- 商品搜索 -->
     <div class="row">
       <div class="col-md-6">
@@ -54,6 +55,7 @@
        </div>
       </div>
     </div>
+    </v-Card>
     <dialog />
   </section>
 </template>
@@ -159,7 +161,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .goods {
   .form-control {
       width: 40%;
