@@ -1,18 +1,8 @@
 <template>
-  <nav class="navbar navbar-default top-navbar" role="navigation">
-          <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-              <router-link class="navbar-brand" to="/"><i class="fa fa-comments"></i> <strong>MASTER </strong></router-link>
-          </div>
-
-          <ul class="nav navbar-top-links navbar-right">
+  <nav class="navbar navbar-default top-navbar">
+          <ul class="nav navbar-top-links">
               <li class="dropdown">
-                  <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:;" aria-expanded="false">
+                  <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:;">
                       <i class="fa fa-user fa-lg fa-fw"></i> <i class="fa fa-caret-down"></i>
                   </a>
                   <ul class="dropdown-menu dropdown-user">

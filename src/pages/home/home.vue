@@ -1,178 +1,95 @@
 <template>
-  <div class="home">
-    <div class="col-md-6">
-      <v-chart :options="userCount"></v-chart>
+  <div class="row">
+    <div class="baseCount">
+      <div class="count-body">
+        <div class="body-left"><i class="fa fa-user fa-3x"></i></div>
+        <div class="body-right">
+          <span>151</span>
+          <p>用户总数</p>
+        </div>
+      </div>
+      <div class="count-body">
+        <div class="body-left"><i class="fa fa-user fa-3x"></i></div>
+        <div class="body-right">
+          <span>151</span>
+          <p>用户总数</p>
+        </div>
+      </div>
+      <div class="count-body">
+        <div class="body-left"><i class="fa fa-user fa-3x"></i></div>
+        <div class="body-right">
+          <span>151</span>
+          <p>用户总数</p>
+        </div>
+      </div>
     </div>
     <div class="col-md-6">
-    <v-chart :options="goodsCount"></v-chart>
+      <v-Card>
+        <Ve-histogram :settings="histogramOp" width="100%" :data="histogramData"></Ve-histogram>
+      </v-Card>
     </div>
     <div class="col-md-6">
-    <v-chart :options="orderCount"></v-chart>
+      <v-Card>
+        <Ve-pie :data="pieData" width="100%"></Ve-pie>
+      </v-Card>
+    </div>
+    <div class="col-md-6">
+      <v-Card>
+        <Ve-line :data="lineData" width="100%"></Ve-line>
+      </v-Card>
     </div>
   </div>
 </template>
 
 <script>
-import 'echarts/lib/chart/bar'
-import 'echarts/lib/component/title'
-import 'echarts/lib/component/tooltip'
-import 'echarts/lib/component/legend'
-// 饼图
-import 'echarts/lib/chart/pie'
-import 'echarts/lib/component/visualMap'
-// 折线图
-import 'echarts/lib/chart/line'
+import VeLine from 'v-charts/lib/line.common'
+import VeHistogram from 'v-charts/lib/histogram.common'
+import VePie from 'v-charts/lib/pie.common'
   export default {
+    components: {
+      VeLine,
+      VeHistogram,
+      VePie
+    },
     data() {
+      this.histogramOp = {
+        axisSite: { right: ['下单率'] },
+        yAxisType: ['KMB', 'percent'],
+        yAxisName: ['数值', '比率']
+      }
       return {
-        userCount: {
-          title : {
-              text: '用户总数',
-              subtext: '纯属虚构'
-          },
-          tooltip : {
-            trigger: 'axis'
-          },
-          legend: {
-              data:['注册量','在线量']
-          },
-          calculable : true,
-          xAxis : [
-              {
-                  type : 'category',
-                  data : ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月']
-              }
-          ],
-          yAxis : [
-              {
-                  type : 'value'
-              }
-          ],
-          series : [
-              {
-                  name:'注册量',
-                  type:'bar',
-                  data:[2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3],
-                  markPoint : {
-                      data : [
-                          {type : 'max', name: '最大值'},
-                          {type : 'min', name: '最小值'}
-                      ]
-                  },
-                  markLine : {
-                      data : [
-                          {type : 'average', name: '平均值'}
-                      ]
-                  }
-              },
-              {
-                  name:'在线量',
-                  type:'bar',
-                  data:[2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3],
-                  markPoint : {
-                      data : [
-                          {name : '年最高', value : 182.2, xAxis: 7, yAxis: 183, symbolSize:18},
-                          {name : '年最低', value : 2.3, xAxis: 11, yAxis: 3}
-                      ]
-                  },
-                  markLine : {
-                      data : [
-                          {type : 'average', name : '平均值'}
-                      ]
-                  }
-              }
+        lineData: {
+          columns: ['日期', '访问用户', '下单用户', '下单率'],
+          rows: [
+            { '日期': '1/1', '访问用户': 1393, '下单用户': 1093, '下单率': 0.32 },
+            { '日期': '1/2', '访问用户': 3530, '下单用户': 3230, '下单率': 0.26 },
+            { '日期': '1/3', '访问用户': 2923, '下单用户': 2623, '下单率': 0.76 },
+            { '日期': '1/4', '访问用户': 1723, '下单用户': 1423, '下单率': 0.49 },
+            { '日期': '1/5', '访问用户': 3792, '下单用户': 3492, '下单率': 0.323 },
+            { '日期': '1/6', '访问用户': 4593, '下单用户': 4293, '下单率': 0.78 }
           ]
         },
-        goodsCount: {
-          backgroundColor: '#fff',
-          title: {
-              text: '商品销售统计',
-              left: 'center',
-              top: 20,
-              textStyle: {
-                  color: '#000'
-              }
-          },
-
-          tooltip : {
-              trigger: 'item',
-              formatter: "{a} <br/>{b} : {c} ({d}%)"
-          },
-
-          visualMap: {
-              show: false,
-              min: 80,
-              max: 600,
-              inRange: {
-                  colorLightness: [0, 1]
-              }
-          },
-          series : [
-              {
-                  name:'商品购买来源',
-                  type:'pie',
-                  radius : '55%',
-                  center: ['50%', '50%'],
-                  data:[
-                      {value:335, name:'直接购物'},
-                      {value:310, name:'海外代购'},
-                      {value:274, name:'微商推销'},
-                      {value:235, name:'视频广告'},
-                      {value:400, name:'搜索引擎'}
-                  ].sort(function (a, b) { return a.value - b.value; }),
-                  roseType: 'radius',
-                  label: {
-                      normal: {
-                          textStyle: {
-                              color: '#000'
-                          }
-                      }
-                  },
-                  labelLine: {
-                      normal: {
-                          lineStyle: {
-                              color: '#283643'
-                          },
-                          smooth: 0.2,
-                          length: 10,
-                          length2: 20
-                      }
-                  },
-                  itemStyle: {
-                      normal: {
-                          color: '',
-                          shadowBlur: 200,
-                          shadowColor: 'rgba(0, 0, 0, 0.5)'
-                      }
-                  },
-
-                  animationType: 'scale',
-                  animationEasing: 'elasticOut',
-                  animationDelay: function (idx) {
-                      return Math.random() * 200;
-                  }
-              }
+        histogramData: {
+          columns: ['日期', '访问用户', '下单用户', '下单率'],
+          rows: [
+            { '日期': '1/1', '访问用户': 1393, '下单用户': 1093, '下单率': 0.32 },
+            { '日期': '1/2', '访问用户': 3530, '下单用户': 3230, '下单率': 0.26 },
+            { '日期': '1/3', '访问用户': 2923, '下单用户': 2623, '下单率': 0.76 },
+            { '日期': '1/4', '访问用户': 1723, '下单用户': 1423, '下单率': 0.49 },
+            { '日期': '1/5', '访问用户': 3792, '下单用户': 3492, '下单率': 0.323 },
+            { '日期': '1/6', '访问用户': 4593, '下单用户': 4293, '下单率': 0.78 }
           ]
         },
-        orderCount: {
-          title: {
-            text: '订单总数'
-          },
-          tooltip: {
-           trigger: 'axis'
-          },
-          xAxis: {
-            type: 'category',
-            data: ['周一','周二','周三','周四','周五','周六','周日']
-          },
-          yAxis: {
-            type: 'value'
-          },
-          series: [{
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
-            type: 'line',
-            smooth: true
-          }]
+        pieData: {
+          columns: ['日期', '访问用户'],
+          rows: [
+            { '日期': '1/1', '访问用户': 1393 },
+            { '日期': '1/2', '访问用户': 3530 },
+            { '日期': '1/3', '访问用户': 2923 },
+            { '日期': '1/4', '访问用户': 1723 },
+            { '日期': '1/5', '访问用户': 3792 },
+            { '日期': '1/6', '访问用户': 4593 }
+          ]
         }
       }
     }
@@ -180,10 +97,40 @@ import 'echarts/lib/chart/line'
 </script>
 
 <style lang="less">
-  .echarts {
-    background-color: #fff;
-    border-radius: 5px;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
-    margin-top: 30px;
+.baseCount {
+  display: flex;
+  align-items: center;
+  box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+  background-color: #fff;
+  margin: 0 15px 0 15px;
+  margin-bottom: 15px;
+  .count-body {
+    height: 140px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-right: 20px;
+    .body-left {
+      display: flex;
+      align-items: center;
+      background-color: rgb(45, 140, 240);
+      border-top-left-radius: 5px;
+      border-bottom-left-radius: 5px;
+      padding: 10px;
+      height: 100%;
+      color: #fff;
+    }
+    .body-right {
+      span {
+        font-size: 45px;
+      }
+      p {
+        text-align: center;
+        margin: 0;
+        padding-top: 10px;
+        font-size: 14px;
+      }
+    }
   }
+}
 </style>

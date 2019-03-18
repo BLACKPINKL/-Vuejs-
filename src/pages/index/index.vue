@@ -1,11 +1,11 @@
 <template>
   <div id="wrapper">
-    <Nav-top></Nav-top>
-    <Nav-side @getIsClosed="getIsClosed"></Nav-side>
+    <Nav-side></Nav-side>
     <!-- container -->
-    <div id="page-wrapper" :class="[pageWrapper, { wrapClosed: isClosed }]">
-      <Content-title :title="title"></Content-title>
+    <div id="page-wrapper" class="page-wrapper">
+      <Nav-top></Nav-top>
       <div id="page-inner">
+        <Content-title :title="title"></Content-title>
         <router-view></router-view>
       </div>
     </div>
@@ -26,20 +26,12 @@ import ContentTitle from 'components/_layout/content-title/content-title'
     },
     data() {
       return {
-        isClosed: false,
-        title: 'Charts',
-        pageWrapper: 'page-wrapper',
-        wrapClosed: 'wrap-closed'
+        title: 'Charts'
       }
     },
     watch: {
       getRouterName(val, oldVal) {
         this.title = val
-      }
-    },
-    methods: {
-      getIsClosed(data) {
-        this.isClosed = data
       }
     },
     computed: {

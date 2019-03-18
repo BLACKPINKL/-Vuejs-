@@ -1,8 +1,10 @@
 <template>
   <!-- navside -->
-  <nav :class="[navbarDefault, navbarSide, { navbarClosed: isClosed }]">
-    <div id="sideNav" @click="handleClosed" :class="{ closed: isClosed }"><i class="fa fa-caret-right"></i></div>
+  <nav class="navbar-default navbar-side">
       <div class="sidebar-collapse">
+        <div class="navbar-logo">
+            <router-link class="navbar-brand" to="/"><i class="fa fa-comments"></i> <strong>MASTER </strong></router-link>
+        </div>
           <div class="user-info">
             <img class="user-head" src="../../../../static/userHead.jpg" alt="admin">
             <div class="user-body">
@@ -47,11 +49,7 @@ export default {
         { path: '/home', link: '首页', iconClassname: 'fa fa-home' },
         { path: '/order', link: '订单', iconClassname: 'fa fa-list-alt' },
         { path: '/user',  link: '用户',iconClassname: 'fa fa-user' }
-      ],
-      isClosed: false,
-      navbarDefault: 'navbar-default',
-      navbarSide : 'navbar-side',
-      navbarClosed: 'navbar-closed'
+      ]
     }
   },
   created() {
@@ -66,11 +64,6 @@ export default {
       }else {
         self.parentElement.classList.add('active')
       }
-    },
-    handleClosed() {
-      this.isClosed = !this.isClosed
-      // 向父组件传值
-      this.$emit('getIsClosed', this.isClosed)
     }
   }
 }
