@@ -1,6 +1,6 @@
 <template>
   <!-- navside -->
-  <nav class="navbar-default navbar-side">
+  <nav class="navbar-default navbar-side" :style="getNavSideToggle">
       <div class="sidebar-collapse">
         <div class="navbar-logo">
             <router-link class="navbar-brand" to="/"><i class="fa fa-comments"></i> <strong>MASTER </strong></router-link>
@@ -49,7 +49,12 @@ export default {
         { path: '/home', link: '首页', iconClassname: 'fa fa-home' },
         { path: '/order', link: '订单', iconClassname: 'fa fa-list-alt' },
         { path: '/user',  link: '用户',iconClassname: 'fa fa-user' }
-      ]
+      ],
+      navSideToggle: {
+        'width': '0',
+        'z-index': '1',
+        'overflow': 'hidden'
+      }
     }
   },
   created() {
@@ -64,6 +69,11 @@ export default {
       }else {
         self.parentElement.classList.add('active')
       }
+    }
+  },
+  computed: {
+    getNavSideToggle() {
+      return this.$store.state.navbarToggle ? this.navSideToggle : null
     }
   }
 }

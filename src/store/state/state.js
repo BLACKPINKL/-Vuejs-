@@ -7,5 +7,7 @@ export default {
   // 所有页数加起来的项目数
   totalItems: 30,
   // 每次路由跳转的名称
-  routerName: ''
+  routerName: '',
+  // 侧边栏切换
+  navbarToggle: false
 }

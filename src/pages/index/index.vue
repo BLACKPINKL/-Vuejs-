@@ -2,7 +2,7 @@
   <div id="wrapper">
     <Nav-side></Nav-side>
     <!-- container -->
-    <div id="page-wrapper" class="page-wrapper">
+    <div id="page-wrapper" class="page-wrapper" :style="getNavSideToggle">
       <Nav-top></Nav-top>
       <div id="page-inner">
         <Content-title :title="title"></Content-title>
@@ -26,7 +26,11 @@ import ContentTitle from 'components/_layout/content-title/content-title'
     },
     data() {
       return {
-        title: 'Charts'
+        title: 'Charts',
+        pageWrapToggle: {
+          'margin-left': '0',
+          'overflow': 'hidden'
+        }
       }
     },
     watch: {
@@ -37,6 +41,9 @@ import ContentTitle from 'components/_layout/content-title/content-title'
     computed: {
       getRouterName() {
         return this.$store.state.routerName
+      },
+      getNavSideToggle() {
+        return this.$store.state.navbarToggle ? this.pageWrapToggle : null
       }
     }
   }

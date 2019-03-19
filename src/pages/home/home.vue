@@ -1,25 +1,17 @@
 <template>
   <div class="row">
     <div class="baseCount">
-      <div class="count-body">
+      <div class="count-body"
+      v-for="(item, index) in countList"
+      :key="index">
         <div class="body-left"><i class="fa fa-user fa-3x"></i></div>
         <div class="body-right">
-          <span>151</span>
-          <p>用户总数</p>
-        </div>
-      </div>
-      <div class="count-body">
-        <div class="body-left"><i class="fa fa-user fa-3x"></i></div>
-        <div class="body-right">
-          <span>151</span>
-          <p>用户总数</p>
-        </div>
-      </div>
-      <div class="count-body">
-        <div class="body-left"><i class="fa fa-user fa-3x"></i></div>
-        <div class="body-right">
-          <span>151</span>
-          <p>用户总数</p>
+          <count-to
+           :startVal='item.startVal'
+           :endVal='item.endVal'
+           :duration='item.duration'
+           ></count-to>
+          <p>{{item.name}}</p>
         </div>
       </div>
     </div>
@@ -38,6 +30,7 @@
         <Ve-line :data="lineData" width="100%"></Ve-line>
       </v-Card>
     </div>
+    <dialog/>
   </div>
 </template>
 
@@ -45,11 +38,19 @@
 import VeLine from 'v-charts/lib/line.common'
 import VeHistogram from 'v-charts/lib/histogram.common'
 import VePie from 'v-charts/lib/pie.common'
+import common from 'utils/common'
+import statistic from 'service/statistic-service'
+import CountTo from 'vue-count-to'
   export default {
+    mixins: [common, statistic],
     components: {
       VeLine,
       VeHistogram,
-      VePie
+      VePie,
+      CountTo
+    },
+    created() {
+      this.loadBaseCount()
     },
     data() {
       this.histogramOp = {
@@ -58,6 +59,13 @@ import VePie from 'v-charts/lib/pie.common'
         yAxisName: ['数值', '比率']
       }
       return {
+        countList: [
+          { startVal: 0, endVal: 10, duration: 3000, name: '用户总数' },
+          { startVal: 0, endVal: 100, duration: 2000, name: '商品总数' },
+          { startVal: 0, endVal: 110, duration: 1000, name: '订单总数' }
+        ],
+        baseCount: {},
+        baseCountKeys: [],
         lineData: {
           columns: ['日期', '访问用户', '下单用户', '下单率'],
           rows: [
@@ -92,11 +100,27 @@ import VePie from 'v-charts/lib/pie.common'
           ]
         }
       }
+    },
+    methods: {
+      loadBaseCount() {
+        this.getBaseCount().then((res) => {
+          this.baseCount = res.data
+          this.baseCountKeys = Object.keys(this.baseCount)
+          this.countList.forEach((item, i) => {
+            item.endVal = this.baseCount[this.baseCountKeys[i]]
+          })
+        })
+        .catch((err) => {
+          this.TipsModal({
+            text: err || err.msg
+          })
+        })
+      }
     }
-  }
+}
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .baseCount {
   display: flex;
   align-items: center;
@@ -105,11 +129,11 @@ import VePie from 'v-charts/lib/pie.common'
   margin: 0 15px 0 15px;
   margin-bottom: 15px;
   .count-body {
+    flex: auto;
     height: 140px;
     display: flex;
-    justify-content: center;
     align-items: center;
-    padding-right: 20px;
+    // padding-right: 20px;
     .body-left {
       display: flex;
       align-items: center;
@@ -121,7 +145,11 @@ import VePie from 'v-charts/lib/pie.common'
       color: #fff;
     }
     .body-right {
+      width: 100%;
+      text-align: center;
       span {
+        color: #1cc09f;
+        // color: rgb(220, 147, 135);
         font-size: 45px;
       }
       p {

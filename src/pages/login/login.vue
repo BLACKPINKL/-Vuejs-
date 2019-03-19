@@ -79,6 +79,6 @@ import user from 'service/user-service'
   }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 @import '../../style/login/login.less';
 </style>

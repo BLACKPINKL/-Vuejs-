@@ -7,5 +7,8 @@ export default {
   },
   setPageTotal(state, param) {
     state.totalItems = param
+  },
+  setNavbarToggle(state) {
+    state.navbarToggle = !state.navbarToggle
   }
 }
