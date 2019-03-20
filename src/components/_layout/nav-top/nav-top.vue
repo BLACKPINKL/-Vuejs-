@@ -34,6 +34,7 @@
 <script>
 import common from 'utils/common'
 import user from 'service/user-service'
+import { mapState } from 'vuex'
   export default {
     mixins: [common, user],
     data() {
@@ -68,13 +69,27 @@ import user from 'service/user-service'
         })
       },
       navSideToggle() {
+        if (this.Mobile()) {
+          this.$store.commit('setIsMobile')
+          return false
+        }
         this.$store.commit('setNavbarToggle')
+      },
+      // 点击时 判断当前屏幕宽度是否是移动端
+      Mobile() {
+        let { body } = document
+        let rect = body.getBoundingClientRect()
+        return (rect.width - 1) < this.pageWidth
       }
     },
     computed: {
       getNavSideToggle() {
+        if (this.isMobile) {
+          return null
+        }
         return this.$store.state.navbarToggle ? this.navTopToggle : null
-      }
+      },
+      ...mapState(['isMobile', 'pageWidth'])
     }
   }
 </script>

@@ -10,5 +10,8 @@ export default {
   },
   setNavbarToggle(state) {
     state.navbarToggle = !state.navbarToggle
+  },
+  setIsMobile(state) {
+    state.isMobile = !state.isMobile
   }
 }

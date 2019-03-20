@@ -6,7 +6,8 @@ import orderDetail from 'pages/order/detail/order-detail.vue'
 import user from 'pages/user/user.vue'
 import goods from 'pages/goods/goods.vue'
 import goodsSave from 'pages/goods/save/save.vue'
-import goodsDetail from 'pages/goods/detail/detail.vue'
+import goodsCategory from 'pages/goods/category/category.vue'
+import goodsCategoryChildren from 'pages/goods/category/children-category/children-category.vue'
 
 const routes = [
   {
@@ -21,7 +22,9 @@ const routes = [
       { path: '/goods', component: goods, name: 'Goods' },
       { path: '/goods/save', component: goodsSave, name: 'GoodsSave' },
       { path: '/goods/edit/:categoryId', component: goodsSave, name: 'GoodsEdit' },
-      { path: '/goods/detail/:categoryId', component: goodsSave, name: 'GoodsDetail' }
+      { path: '/goods/category', component: goodsCategory, name: 'goodsCategory' },
+      { path: '/goods/category/children/:id', component: goodsCategoryChildren, name: 'goodsCategoryChildren' }
+
     ]
   },
   { path: '/login', component: login, hidden: true, name: 'Login' }

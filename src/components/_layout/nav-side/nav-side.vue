@@ -29,7 +29,7 @@
                    </router-link>
                   <ul class="nav nav-second-level collapse" id="collapse1-id">
                       <li>
-                          <a href="/goods/category">品类管理</a>
+                          <router-link to="/goods/category">品类管理</router-link>
                       </li>
                   </ul>
               </li>
@@ -40,6 +40,7 @@
 
 <script>
 import common from 'utils/common'
+import { mapState } from 'vuex'
 export default {
   extends: common,
   data() {
@@ -51,9 +52,15 @@ export default {
         { path: '/user',  link: '用户',iconClassname: 'fa fa-user' }
       ],
       navSideToggle: {
-        'width': '0',
-        'z-index': '1',
+        'width': '0px',
+        'height': '0',
         'overflow': 'hidden'
+      },
+      mobileNavSideToggle: {
+        'position': 'fixed',
+        'width': '260px',
+        'height': '100%',
+        'overflow-y': 'hidden'
       }
     }
   },
@@ -73,8 +80,12 @@ export default {
   },
   computed: {
     getNavSideToggle() {
+      if (this.isMobile) {
+        return this.mobileNavSideToggle
+      }
       return this.$store.state.navbarToggle ? this.navSideToggle : null
-    }
+    },
+    ...mapState(['isMobile'])
   }
 }
 </script>

@@ -2,7 +2,7 @@
   <div id="wrapper">
     <Nav-side></Nav-side>
     <!-- container -->
-    <div id="page-wrapper" class="page-wrapper" :style="getNavSideToggle">
+    <div id="page-wrapper" :style="getNavSideToggle">
       <Nav-top></Nav-top>
       <div id="page-inner">
         <Content-title :title="title"></Content-title>
@@ -18,6 +18,7 @@ import 'style/custom-styles.css'
 import NavTop from 'components/_layout/nav-top/nav-top'
 import NavSide from 'components/_layout/nav-side/nav-side'
 import ContentTitle from 'components/_layout/content-title/content-title'
+import { mapState } from 'vuex'
   export default {
     components: {
       NavTop,
@@ -29,6 +30,10 @@ import ContentTitle from 'components/_layout/content-title/content-title'
         title: 'Charts',
         pageWrapToggle: {
           'margin-left': '0',
+          'overflow': 'hidden'
+        },
+        mobilepageWrapToggle:{
+          'margin-left': '260px',
           'overflow': 'hidden'
         }
       }
@@ -43,8 +48,12 @@ import ContentTitle from 'components/_layout/content-title/content-title'
         return this.$store.state.routerName
       },
       getNavSideToggle() {
+        if (this.isMobile) {
+          return this.mobilepageWrapToggle
+        }
         return this.$store.state.navbarToggle ? this.pageWrapToggle : null
-      }
+      },
+      ...mapState(['isMobile'])
     }
   }
 </script>

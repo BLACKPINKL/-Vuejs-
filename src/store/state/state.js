@@ -9,5 +9,9 @@ export default {
   // 每次路由跳转的名称
   routerName: '',
   // 侧边栏切换
-  navbarToggle: false
+  navbarToggle: false,
+  // 是否是移动端
+  isMobile: false,
+  // 小屏宽度
+  pageWidth: 992
 }
