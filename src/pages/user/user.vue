@@ -46,7 +46,7 @@
             <div class="pagination-box">
             <uib-pagination
             :totalItems="totalItems"
-            :items-per-page="page.pageSize"
+            :items-per-page="parseInt(page.pageSize)"
             v-model="paginationOp"
             :max-size="5"
             class="pagination-md"

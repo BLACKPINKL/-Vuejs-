@@ -14,7 +14,10 @@
   "dependencies": {
     "axios": "^0.18.0",
     "echarts": "^4.1.0",
+    "nprogress": "^0.2.0",
     "v-charts": "^1.19.0",
+    "v-dialogs": "^2.0.3",
+    "vodal": "^2.4.0",
     "vue": "^2.6.7",
     "vue-axios": "^2.1.4",
     "vue-core-image-upload": "^2.4.11",

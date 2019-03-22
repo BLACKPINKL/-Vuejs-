@@ -13,5 +13,8 @@ export default {
   // 是否是移动端
   isMobile: false,
   // 小屏宽度
-  pageWidth: 992
+  pageWidth: 992,
+  // dialog 是否显示
+  show: false,
+  isTips: false
 }

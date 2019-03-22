@@ -13,5 +13,14 @@ export default {
   },
   setIsMobile(state) {
     state.isMobile = !state.isMobile
+  },
+  setDialogShow(state) {
+    state.show = true
+  },
+  colseDialog(state) {
+    state.show = false
+  },
+  setIsTips(state) {
+    state.isTips = true
   }
 }
