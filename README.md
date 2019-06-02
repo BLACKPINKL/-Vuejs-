@@ -1,4 +1,4 @@
-## 基于Vue.js开发的Web级后台管理
+## 基于Vue.js开发的Web级后台管理模板
 
 [在线 Demo](https://www.qinjianfei.top)
 
