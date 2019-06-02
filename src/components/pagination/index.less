@@ -1,0 +1,55 @@
+/* 分页样式 */
+.pagination-box {
+  text-align: right;
+  .paginate {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    box-shadow: 0 1px 2px rgba(0,0,0,.0);
+    li {
+      text-align: center;
+      margin: 0;
+      display: inline;
+      &.disabled {
+        a {
+          color: #999;
+          cursor: not-allowed;
+          &:hover {
+            color: #999;
+            background-color: #fff;
+            box-shadow: none;
+          }
+        }
+      }
+      &.active {
+        a {
+          color: #fff !important;
+          background-color: #1cc09f !important;
+        }
+      }
+      a {
+        user-select: none;
+        outline: none;
+        margin: 0 0 0 -1px;
+        position: relative;
+        border: 1px solid #dee2e6;
+        border-radius: 0;
+        padding: 6px 12px;
+        line-height: 1.4;
+        -moz-box-shadow: none;
+        box-shadow: none;
+        background-color: #fff;
+        font-size: 14px;
+        display: inline-block;
+        float: left;
+        text-decoration: none;
+        color: #333;
+        transition: all .5s cubic-bezier(.175,.885,.32,1);
+        &:hover {
+          z-index: 2;
+          box-shadow: 0 0 8px rgba(0,0,0,.3);
+        }
+      }
+    }
+  }
+}

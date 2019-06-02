@@ -8,11 +8,14 @@ export default {
   setPageTotal(state, param) {
     state.totalItems = param
   },
-  setNavbarToggle(state) {
-    state.navbarToggle = !state.navbarToggle
+  setRouterName(state, name) {
+    state.routerName = name
   },
-  setIsMobile(state) {
-    state.isMobile = !state.isMobile
+  setNavbarToggle(state, flag) {
+    state.navbarToggle = flag ? flag : !state.navbarToggle
+  },
+  setNavsideWidth(state, width) {
+    state.navsideWidth = width
   },
   setDialogShow(state) {
     state.show = true
@@ -22,5 +25,20 @@ export default {
   },
   setIsTips(state) {
     state.isTips = true
+  },
+  showLoading(state) {
+    state.loading = true
+  },
+  closeLoading(state) {
+    state.loading = false
+  },
+  setActiveClass(state, active) {
+    state.activeClass = active
+  },
+  addCacheRoutes(state, route) {
+    if (state.cacheRoutes.includes(route.name)) return
+    if (!route.meta.noCache) {
+      state.cacheRoutes.push(route.name)
+    }
   }
 }

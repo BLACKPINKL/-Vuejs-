@@ -17,71 +17,51 @@
         </div>
         <div class="row">
           <div class="col-sm-12">
-            <div class="table-responsive">
-              <table class="table table-bordered table-hover dataTable no-footer">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>用户名</th>
-                    <th>邮箱</th>
-                    <th>电话</th>
-                    <th>注册时间</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(item, index) in userData.list" :key="index">
-                    <td>{{item.id}}</td>
-                    <td>{{item.username}}</td>
-                    <td>{{item.email}}</td>
-                    <td>{{item.phone}}</td>
-                    <td>{{item.createTime}}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <Table
+            :loading="loading"
+            :columns="columns"
+            :data="userData.list"/>
           </div>
         </div>
         <div class="row">
           <div class="col-sm-12">
             <div class="pagination-box">
-            <uib-pagination
-            :totalItems="totalItems"
-            :items-per-page="parseInt(page.pageSize)"
-            v-model="paginationOp"
-            :max-size="5"
-            class="pagination-md"
-            :boundary-links="true"
-            :force-ellipses="true"
-            @change="pageChanged">
-           </uib-pagination>
+              <Pagination
+                :pageTotal="totalItems"
+                @pageChange="pageChanged">
+              </Pagination>
            </div>
           </div>
         </div>
       </v-Card>
     </div>
-    <!-- 模态框 -->
-    <dialog />
   </section>
 </template>
 
 <script>
-import common from 'utils/common'
-import user from 'service/user-service'
-
+// import table from 'components/table-list/table-list'
+import Table from 'components/table'
+import { getUserList, test } from 'service/user-service'
 import {
   mapState,
   mapMutations,
   mapGetters
 } from 'vuex'
-
   export default {
-    mixins: [common, user],
+    components: {
+      Table
+    },
+    name: 'user',
     data() {
       return {
-        userData: {},
-        paginationOp: {
-          currentPage: 1
-        }
+        columns: [
+          { key: 'id', title: 'ID', align: 'center', width: 100 },
+          { key: 'username', title: '用户名' },
+          { key: 'email', title: '邮箱', align: 'center' },
+          { key: 'phone', title: '电话', align: 'center' },
+          { key: 'createTime', title: '注册时间', align: 'center', width: 170 }
+        ],
+        userData: {}
       }
     },
     created() {
@@ -89,21 +69,20 @@ import {
     },
     methods: {
       loadUserList(page) {
-        this.getUserList(page).then((res) => {
-          this.userData = res.data
+        getUserList(page).then((res) => {
+          this.userData = Object.freeze(res.data)
+          // this.userData = res.data
           // 修改总页数
-          this.setPageTotal(this.userData.total)
+          this.setPageTotal(this.userData.pages)
         })
         .catch((err) => {
-          this.TipsModal({
-            text: err.msg || err.statusText
-          })
+          this.uTerrTips(err.msg || err.response.message)
         })
       },
-      pageChanged: function() {
+      pageChanged(pageNum) {
         // 修改当前页码
-        this.setPageNum(this.paginationOp.currentPage)
-          this.loadUserList(this.page)
+        this.setPageNum(pageNum)
+        this.loadUserList(this.page)
       },
       // select 改变pageSize
       getPageSize(e) {
@@ -115,7 +94,7 @@ import {
     },
     computed: {
       // 获取vuex state数据
-      ...mapState(['page', 'totalItems'])
+      ...mapState(['page', 'totalItems', 'loading'])
     }
   }
 </script>
@@ -131,7 +110,7 @@ import {
       width: 75px;
       display: inline-block;
       &:focus {
-        border: 2px solid #1cc09f;
+        border: 1px solid #1cc09f;
       }
     }
   }

@@ -3,44 +3,48 @@
     <v-Card>
     <div class="row">
       <div class="col-md-12">
-        <p>订单号:    {{orderDeatilData.orderNo }}</p>
-        <p>创建时间:    {{orderDeatilData.createTime}}</p>
-        <p>收件人:    {{orderDeatilData.receiverName}}</p>
-        <p>订单状态:    {{orderDeatilData.statusDesc}}</p>
-        <p>支付方式:    {{orderDeatilData.paymentTypeDesc}}</p>
-        <p>订单金额:    {{orderDeatilData.payment}}</p>
+        <div class="order-detail-info">
+          <p>订单号：{{ orderDeatilData.orderNo }}</p>
+          <p>创建时间：{{ orderDeatilData.createTime }}</p>
+        </div>
+        <div class="order-detail-info">
+          <p>收件人：{{orderDeatilData.receiverName}}</p>
+          <p>订单状态：<Tag type="warning">{{ orderDeatilData.statusDesc }}</Tag></p>
+        </div>
+        <div class="order-detail-info">
+          <p>支付方式：<Tag type="info">{{ orderDeatilData.paymentTypeDesc }}</Tag></p>
+          <p>订单金额：{{ orderDeatilData.payment }}</p>
+        </div>
       </div>
     </div>
-    <Table :thead="thead">
-      <template v-slot:tbody>
-        <tr v-for="(item, index) in orderDeatilData.orderItemVoList"
-        :key="index">
-          <td><img width="100" height="100" :src="item.productImage ? orderDeatilData.imageHost + item.productImage : '当前商品没有图片'" alt=""></td>
-          <td>{{item.productName}}</td>
-          <td>{{item.currentUnitPrice}}</td>
-          <td>{{item.quantity}}</td>
-          <td>{{item.totalPrice}}</td>
-        </tr>
-      </template>
-    </Table>
+    <Table :columns="columns"
+    :data="orderDeatilData.orderItemVoList"/>
     </v-Card>
-    <dialog />
   </section>
 </template>
 
 <script>
-import table from 'components/table-list/table-list.vue'
-import common from 'utils/common'
-import order from 'service/order-service'
+import Table from 'components/table'
+import {getOrderDetail} from 'service/order-service'
 export default {
-  mixins: [common, order],
   props: ['orderNo'],
   components: {
-    'Table': table
+    Table
   },
+  name: 'orderDetail',
   data() {
     return {
-      thead: ['商品图片', '商品信息', '单价', '数量', '合计'],
+      columns: [
+        { key: 'productImage', title: '商品图片', align: 'center', width: 170, render: (h, {row, i}) => {
+          return(
+            <img width="100" height="100" src={row.productImage ? this.orderDeatilData.imageHost + row.productImage : '当前商品暂无图片'} alt=""/>
+          )
+        }},
+        { key: 'productName', title: '商品信息' },
+        { key: 'currentUnitPrice', title: '单价', width: 100, align: 'center' },
+        { key: 'quantity', title: '数量', width: 120, align: 'center' },
+        { key: 'totalPrice', title: '合计', align: 'center', width: 210 }
+      ],
       orderNumber: this.orderNo,
       orderDeatilData: {}
     }
@@ -51,15 +55,21 @@ export default {
   },
   methods: {
     loadOderDetail(orderNo) {
-      this.getOrderDetail(orderNo).then((res) => {
-        this.orderDeatilData = res.data
+      getOrderDetail(orderNo).then((res) => {
+        this.orderDeatilData = Object.freeze(res.data)
       })
       .catch((err) => {
-        this.TipsModal({
-          text: err.msg || err.statusText
-        })
+        this.uTerrTips(err.msg || err.response.message)
       })
     }
   }
 }
 </script>
+
+
+<style lang="less">
+.order-detail-info {
+  display: inline-block;
+  margin: 0 30px;
+}
+</style>

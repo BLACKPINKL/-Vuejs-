@@ -9,12 +9,12 @@ export default {
   // 每次路由跳转的名称
   routerName: '',
   // 侧边栏切换
-  navbarToggle: false,
-  // 是否是移动端
-  isMobile: false,
-  // 小屏宽度
-  pageWidth: 992,
-  // dialog 是否显示
-  show: false,
-  isTips: false
+  navbarToggle: true,
+  // show: false,
+  // isTips: false,
+  loading: true,
+  navsideWidth: '260px',
+  // activeClass: '/statistic',
+  // 需要缓存的路由name
+  cacheRoutes: []
 }

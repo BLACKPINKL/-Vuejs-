@@ -3,82 +3,67 @@
     <div class="login-box">
       <form class="login-form">
           <h3 class="login-head">
-            <i class="fa fa-user fa-lg"></i>
+            <svg-icon iconName="dengluyonghu"></svg-icon>
              SIGN IN
           </h3>
           <div class="form-group">
             <label for="username">USERNAME</label>
-            <input type="text" v-model.trim="username" id="username" class="form-control" placeholder="admin名称">
+            <input type="text" v-model.trim="username" id="username" class="form-control" placeholder="请输入账号">
           </div>
           <div class="form-group">
             <label for="password">PASSWORD</label>
-            <input type="password" v-model.trim="password" id="password" class="form-control" placeholder="admin密码">
+            <input type="password" v-model.trim="password" id="password" class="form-control" placeholder="请输入密码">
           </div>
           <div class="form-group">
-            <input type="checkbox" id="checkbox" class="form-checkbox">
-            <label for="checkbox">记住密码</label>
+            <label>账号：admin</label>
+            <label style="display: block">密码：admin</label>
           </div>
           <div class="form-group btn-cont">
-            <button @click.prevent="handlerUserInfo" class="submit-btn">
-              <i class="fa fa-sign-in fa-lg fa-fw"></i>
+            <Button @click.native.prevent="handlerUserInfo" className="fei-btn-block" type="success">
+              <svg-icon iconName="denglu"/>
               SIGN IN
-            </button>
+            </Button>
           </div>
       </form>
     </div>
-    <v-dialog />
   </section>
 </template>
 
 <script>
-import common from 'utils/common'
-import user from 'service/user-service'
+import { checkLogin, login } from 'service/user-service'
+import { uTsetUserInfo } from 'utils/cookie'
   export default {
-    mixins: [common, user],
     data() {
       return {
         username: '',
         password: ''
       }
     },
+    name: 'login',
     methods: {
       handlerUserInfo(e) {
         let userInfo = {
             username: this.username,
             password: this.password
-          },
-            vaildate = this.checkLogin(userInfo),
-            that = this
+            },
+            vaildate = checkLogin(userInfo)
         if (vaildate.status) {
-          this.login(userInfo).then((res) => {
-            this.setLocalStorage('userInfo', res.data)
-            this.handleModal({
-              title: vaildate.msg,
-              text: '欢迎登录 - BLACKPINK',
-              buttons: [
-                { title: '确定', handler(){
-                  that.modalHide()
-                  that.gohome()
-                }}
-              ]
-            })
-          }).catch((err) => {
-              this.TipsModal({
-                text: err.msg || err.statusText
-              })
+          login(userInfo).then((res) => {
+            uTsetUserInfo('userInfo', res.data)
+            this.uTgohome()
           })
-        }else {
-          this.TipsModal({
-            title: '验证不通过',
-            text: vaildate.msg
+          .catch((err) => {
+            this.uTerrTips(err.msg || err.response.message)
           })
         }
+        else {
+          this.uTerrTips(vaildate.msg)
+        }
       }
-
     }
   }
 </script>
 
 <style lang="less" scoped>
-@import '../../style/login/login.less';
+@import './login.less';
 </style>

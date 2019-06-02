@@ -1,63 +1,104 @@
 <template>
   <div id="wrapper">
-    <Nav-side></Nav-side>
+    <Sidebar/>
+    <div
+      v-if="flag"
+      @click="outSide"
+      class="drawer-bg">
+    </div>
     <!-- container -->
-    <div id="page-wrapper" :style="getNavSideToggle">
-      <Nav-top></Nav-top>
+    <div id="page-wrapper" :style="{'margin-left': getMobile}">
+      <Nav-top/>
       <div id="page-inner">
-        <Content-title :title="title"></Content-title>
-        <router-view></router-view>
+        <Content-title :title="routerName"/>
+        <transition name="fade" mode="out-in">
+          <keep-alive :include="getCachedRoutes">
+            <router-view/>
+          </keep-alive>
+        </transition>
       </div>
     </div>
   </div>
-<!-- /. PAGE INNER  -->
 </template>
 
 <script>
-import 'style/custom-styles.css'
 import NavTop from 'components/_layout/nav-top/nav-top'
-import NavSide from 'components/_layout/nav-side/nav-side'
+import Sidebar from 'components/_layout/sidebar'
 import ContentTitle from 'components/_layout/content-title/content-title'
-import { mapState } from 'vuex'
+import {
+  mapState,
+  mapGetters,
+  mapMutations,
+  mapActions
+} from 'vuex'
   export default {
     components: {
       NavTop,
-      NavSide,
+      Sidebar,
       ContentTitle
     },
-    data() {
-      return {
-        title: 'Charts',
-        pageWrapToggle: {
-          'margin-left': '0',
-          'overflow': 'hidden'
-        },
-        mobilepageWrapToggle:{
-          'margin-left': '260px',
-          'overflow': 'hidden'
+    name: 'layout',
+    watch: {
+      getRouterName(val) {
+        this.title = val
+      },
+      // 如果是移动端 点击侧边栏进行路由跳转时把侧边栏隐藏
+      // 同时遮罩层关闭
+      '$route': {
+        handler(route) {
+          this.asyncAddCacheRoutes(route)
+          if (this.flag) {
+            this.outSide()
+          }
         }
       }
     },
-    watch: {
-      getRouterName(val, oldVal) {
-        this.title = val
+    created() {
+      this.asyncAddCacheRoutes(this.$route)
+      // 移动端隐藏侧边栏
+      if (this.flag) {
+        this.outSide()
       }
+    },
+    methods: {
+      outSide() {
+        this.setNavbarToggle(false)
+        this.setNavsideWidth('0px')
+      },
+      ...mapMutations(['setNavsideWidth', 'setNavbarToggle']),
+      ...mapActions(['asyncAddCacheRoutes'])
     },
     computed: {
       getRouterName() {
-        return this.$store.state.routerName
+        return this.routerName
       },
-      getNavSideToggle() {
-        if (this.isMobile) {
-          return this.mobilepageWrapToggle
-        }
-        return this.$store.state.navbarToggle ? this.pageWrapToggle : null
+      // 获取需要缓存的路由数组
+      getCachedRoutes() {
+        return this.cacheRoutes
       },
-      ...mapState(['isMobile'])
+      ...mapGetters(['getIsMobile']),
+      ...mapState(['navsideWidth', 'navbarToggle','routerName', 'cacheRoutes']),
+      // 移动端内容区不进行width计算
+      getMobile() {
+        return this.getIsMobile ? '' : this.navsideWidth
+      },
+      flag() {
+        return this.getIsMobile && this.navbarToggle
+      }
     }
   }
 </script>
 
 <style lang="less">
-@import '../../style/pagination.less';
+.drawer-bg {
+  background-color: #000;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  opacity: .3;
+  z-index: 150;
+}
+
 </style>

@@ -1,11 +1,11 @@
 <template>
   <section class="content-title">
     <div>
-      <h1><i class="fa fa-dashboard"></i>&nbsp;{{title}}</h1>
-      <p>A free and open source Bootstrap 4 admin template</p>
+      <h1><svg-icon iconName="biaotitubiao" className="biaoti"></svg-icon>&nbsp;{{title}}</h1>
+      <p>A free and open source Vue.js admin template</p>
     </div>
     <div class="title-link">
-      <i class="fa fa-home fa-lg"></i>
+      <svg-icon iconName="home"></svg-icon>
       <a href="javascript:;">&nbsp;/&nbsp;{{title}}</a>
     </div>
   </section>
@@ -16,7 +16,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: 'Charts'
+      default: ''
     }
   }
 }

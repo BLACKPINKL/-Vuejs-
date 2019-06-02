@@ -1,27 +1,26 @@
-let category = {
-  methods: {
-    getCategoryList(categoryId) {
-      return this.request({
+import { httpPost } from 'utils/request'
+export const getCategoryList = (categoryId) => {
+      return httpPost({
         url: '/manage/category/get_category.do',
         method: 'post',
         data: categoryId
       })
-    },
-    setName(categoryInfo) {
-      return this.request({
+    }
+export const setName = (categoryInfo) => {
+      return httpPost({
         url: '/manage/category/set_category_name.do',
         method: 'post',
         data: categoryInfo
       })
-    },
-    addCate(categoryInfo) {
-      return this.request({
+    }
+export const addCate = (categoryInfo) => {
+      return httpPost({
         url: '/manage/category/add_category.do',
         method: 'post',
         data: categoryInfo
       })
-    },
-    vaildateAddCate(categoryInfo) {
+    }
+export const vaildateAddCate = (categoryInfo) => {
       let result = {
         status: false,
         msg: ''
@@ -38,7 +37,3 @@ let category = {
       result.msg = '验证通过'
       return result
     }
-  }
-}
-
-export default category

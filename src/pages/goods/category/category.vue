@@ -1,120 +1,248 @@
 <template>
   <section class="goods-category">
       <v-Card>
-        <div class="col-md-12" style="text-align: right">
-          <router-link to="/goods/category/save" class="btn btn-primary">添加品类</router-link>
+        <div class="goods-category-from" style="text-align: right">
+          <Button type="primary"  @click.native="handleAddCate">
+            <svg-icon iconName="tianjia"/>
+            添加品类
+          </Button>
         </div>
-        <Table :thead="thead">
-
-          <template v-slot:tbody>
-            <VLoding v-if="loading"></VLoding>
-            <tr
-            v-for="(item, index) in categoryList"
-            :key="index">
-              <td>{{item.id}}</td>
-              <td>{{item.name}}</td>
-              <td>
-                <button class="btn btn-success" @click="setCategoryNanme(item.id)">修改名称</button>
-                <router-link v-if="isCategory" :to="'/goods/category/children/' + item.id" class="btn btn-primary">查看子品类</router-link>
-              </td>
-            </tr>
-          </template>
-        </Table>
+          <div>
+            <Table
+            :loading="loading"
+            :columns="columns"
+            :data="sliceCategoryList"/>
+          </div>
+          <div class="pagination-box">
+            <Pagination
+              :pageTotal="totalItems"
+              @pageChange="pageChanged">
+            </Pagination>
+         </div>
       </v-Card>
   </section>
 </template>
 
 <script>
-import table from 'components/table-list/table-list.vue'
-import common from 'utils/common'
-import category from 'service/category-service'
-import VInput from './components/v-input'
-import VLoding from 'components/_layout/loading/loading'
+import {
+  mapState,
+  mapMutations
+} from 'vuex'
+import Table from 'components/table'
+import Button from 'components/button'
+import svgIcon from 'components/_layout/icon-svg/icon-svg'
+import AddCate from './category-add'
+import {getCategoryList, addCate, setName} from 'service/category-service'
 export default {
-  mixins: [common, category],
   components: {
-    'Table': table,
-    VLoding
+    Table
   },
+  name: 'category',
   data() {
     return {
-      thead: ['品类ID', '品类名称', '操作'],
+      edittingId: -1, //自定义编辑时的标志
+      editVal: '', //修改的值
+      columns: [
+        { key: 'id', title: 'ID', align: 'center', width: 100 },
+        { key: 'name', title: '品类名称', render: (h, {row, index, column}) => {
+          const vnodes = []
+          if (this.edittingId === index) {
+            vnodes.push(
+              <input
+                type="text"
+                class="input-edit"
+                onInput={(e) => this.handleInput(e)}
+                value={this.editVal}/>,
+              <Button
+                size="small"
+                type="warning"
+                style="margin-left: 15px"
+                nativeOnClick={(e) => this.handleCancel(e)}>
+                <svg-icon iconName="quxiao"/>
+                取消
+              </Button>
+            )
+          }else {
+            vnodes.push(<span>{(row[column.key])}</span>)
+          }
+          return vnodes
+        }},
+        { key: 'handler', title: '操作', align: 'center', width: 250, render: (h, {row, index, column}) => {
+          const vnodes = []
+          if (this.edittingId === index) {
+            vnodes.push(
+              <Button
+                size="small"
+                type="success" nativeOnClick={(e) => this.handleSave(row)}>
+                <svg-icon iconName="tijiao"/>
+                保存修改
+              </Button>
+            )
+          } else {
+            vnodes.push(
+              <Button
+                size="small"
+                type="primary" nativeOnClick={(e) => this.handleEdit(row, index)}>
+                <svg-icon iconName="bianji"/>
+                修改名称
+              </Button>
+            )
+          }
+
+          if (this.isCategory) {
+            vnodes.push(
+              <router-link
+                to={'category-children/' + row.id}
+                style="margin-left: 15px">
+                <Button type="success" size="small">
+                  <svg-icon iconName="chaxun"/>
+                  查看子品类
+                </Button>
+              </router-link>
+            )
+          }
+          return vnodes
+        }}
+      ],
       categoryList: [],
-      isCategory: true,
-      loading: true
+      sliceCategoryList: [],
+      isCategory: true
     }
   },
   created() {
     this.loadCategoryList()
   },
   watch: {
-    '$route'(to, from){
-      // 判断当前路由是否是子品类
-      if (to.name === 'categoryChildren') {
-          this.isCategory = false
-          this.loadCategoryList({categoryId: to.params.id})
+    '$route': {
+      handler(to) {
+        // 判断当前路由是否是子品类
+        if (to.name === 'CategoryChildren') {
+            this.isCategory = false
+            this.loadCategoryList({categoryId: to.params.id})
         }else {
-          // 反之则渲染一级品类
           this.isCategory = true
           this.loadCategoryList()
         }
+      },
+      immediate: true
     }
   },
   methods: {
+    // 前端分页逻辑
+    pagination(pageNum = 1) {
+      let pageSize = this.page.pageSize
+      // 总页数
+      let totalItems = Math.ceil(this.categoryList.length / pageSize)
+      this.setPageTotal(totalItems)
+      // 剪切的起始值
+      let startPage = (pageNum - 1) * pageSize
+      // 剪切的终止值
+      let endPage = startPage + pageSize
+      let data = this.categoryList.slice(startPage, endPage)
+      this.sliceCategoryList = data
+    },
     loadCategoryList(categoryId) {
-      this.getCategoryList(categoryId).then((res) => {
+      getCategoryList(categoryId).then((res) => {
         this.categoryList = res.data
-        this.loading = false
+        this.pagination()
       })
       .catch((err) => {
-        this.TipsModal({
-          text: err || err.msg
-        })
+        this.uTerrTips(err.msg || err.response.message)
+      })
+    },
+    // 弹出添加品类组件框
+    handleAddCate() {
+      this.$dlg.modal(AddCate, {
+        width: 500,
+        height: 250,
+        title: '添加品类',
+        // 点击提交验证通过的回调
+        callback: categoryInfo => {
+          // 调用接口 添加品类
+          let key = this.uTmaskTips('数据正在提交中')
+          addCate(categoryInfo).then((res) => {
+            this.uTclosemaskTips(key)
+            this.uThanlerTips('添加成功', () => {
+              // 传入参数 0相当于刷新当前页面
+              this.$router.go(0)
+            })
+          })
+          .catch((err) => {
+            this.uTerrTips(err.msg || err.response.message)
+          })
+        }
       })
     },
     // 修改品类名称
-    setCategoryNanme(categoryId) {
-      let that = this
-      this.$dlg.modal(VInput, {
-        width: 350,
-        height: 350,         
-        title: '请输入新的品类名称',
-        callback(categoryName) {
-          let categoryInfo = {
-            categoryId,
-            categoryName
-          }
-          let key = that.$dlg.mask('数据发送中')
-          that.setName(categoryInfo).then((res) => {
-            that.$dlg.close(key)
-            that.$dlg.alert('修改成功', { messageType: 'success' })
-          })
-          .catch((err) => {
-            that.$dlg.alert(err || err.msg, { messageType: 'error' })
-          })
-        }                  
-      })
-    }
+    setCategoryName(categoryInfo) {
+      let key = this.uTmaskTips('数据发送中...')
+      return setName(categoryInfo).then((res) => {
+        this.uTclosemaskTips(key)
+        this.uTsuccessTips('修改成功')
+        return res
+      })
+      .catch((err) => {
+        this.uTerrTips(err.msg || err.response.message)
+      })
+    },
+    // 编辑时输入文本触发
+    handleInput(e) {
+      let val = e.target.value
+      this.editVal = val
+    },
+    //点击编辑按钮时触发
+    handleEdit(row, i) {
+      this.edittingId = i
+      this.editVal = row.name
+    },
+    // 点击保存触发
+    handleSave(row) {
+
+      if (!this.editVal) {
+        this.uTerrTips('修改名称不能为空！')
+        return
+      }
+      // 调用接口发给后端
+      this.setCategoryName({
+        categoryId: row.id,
+        categoryName: this.editVal
+      }).then(res => {
+        this.handleCancel()
+        this.loadCategoryList()
+      })
+    },
+    handleCancel(e) {
+      this.edittingId = -1
+      this.editVal = ''
+    },
+    pageChanged(pageNum) {
+      // 修改当前页码
+      this.setPageNum(pageNum)
+      this.pagination(pageNum)
+    },
+    ...mapMutations(['setPageNum', 'setPageTotal'])
+  },
+  computed: {
+    // 获取vuex state数据
+    ...mapState(['page', 'totalItems', 'loading'])
   }
 }
 </script>
 
 <style lang="less">
-.my-dialog {
-  input {
-    width: 100%;
-    padding: 10px;
-    border-radius: 3px;
-    border: 1px solid #ddd;
-    color: #555;
-    outline: none;
-    &:focus {
-      border: 2px solid #1cc09f;
-    }
-  }
-  .err {
-    color: #f30;
-    padding-top: 10px;
+.goods-category-from {
+  margin-bottom: 15px;
+}
+.input-edit {
+  outline: none;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  padding-left: 5px;
+  display: inline-block;
+  width: 50%;
+  transition: border-color .3s;
+  &:focus {
+    border-color: #1cc09f;
   }
 }
 </style>

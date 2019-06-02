@@ -1,34 +1,33 @@
-let goods = {
-  methods: {
-    getGoodsList(page) {
-      return this.request({
+import { httpPost } from 'utils/request'
+export const getGoodsList = (page) => {
+      return httpPost({
         url: '/manage/product/list.do',
         method: 'post',
         data: page
       })
-    },
-    setGoodsStatus(productInfo) {
-      return this.request({
+    }
+export const setGoodsStatus = (productInfo) => {
+      return httpPost({
         url: '/manage/product/set_sale_status.do',
         method: 'post',
         data: productInfo
       })
-    },
-    getSearchProduct(productOp) {
-      return this.request({
+    }
+export const getSearchProduct = (productOp) => {
+      return httpPost({
         url: '/manage/product/search.do',
         method: 'post',
         data: productOp
       })
-    },
-    getGoodsEdit(productId) {
-      return this.request({
+    }
+export const getGoodsEdit = (productId) => {
+      return httpPost({
         url: '/manage/product/detail.do',
         method: 'post',
         data: productId
       })
-    },
-    checkNewGoodsInfo(newGoodsInfo) {
+    }
+export const checkNewGoodsInfo = (newGoodsInfo) => {
       let result = {
         msg: '',
         status: false
@@ -70,15 +69,11 @@ let goods = {
       result.msg = '校验通过'
       result.status = true
       return result
-    },
-    saveNewGoods(newGoodsInfo) {
-      return this.request({
+    }
+export const saveNewGoods = (newGoodsInfo) => {
+      return httpPost({
         url: '/manage/product/save.do',
         method: 'post',
         data: newGoodsInfo
       })
     }
-  }
-}
-
-export default goods

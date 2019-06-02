@@ -2,7 +2,7 @@
   <section class="goods">
     <v-Card>
     <!-- 商品搜索 -->
-    <div class="row">
+    <div class="row goods-from">
       <div class="col-md-6">
           <select class="form-control" v-model="selected">
             <option disabled value="">请选择</option>
@@ -10,74 +10,98 @@
             <option :value="name">按商品名称查询</option>
           </select>
           <input type="text" class="form-control" v-model.trim="searchVal" placeholder="输入ID或名称">
-          <button class="btn btn-sm btn-primary" @click="searchProduct">查询</button>
+          <Button
+            @click.native="searchProduct"
+            type="success">
+            <svg-icon iconName="chaxun"/>
+            搜索
+          </Button>
       </div>
       <div class="col-md-6">
         <div style="text-align: right">
-          <router-link to="goods/save" class="btn btn-md btn-primary">添加商品</router-link>
+          <router-link to="add">
+            <Button type="primary">
+              <svg-icon iconName="tianjia"/>
+              添加商品
+            </Button>
+          </router-link>
         </div>
       </div>
     </div>
-    <Table :thead="thead">
-      <template v-slot:tbody>
-        <tr v-for="(item, index) in goodsData.list" :key="index">
-          <td>{{item.id}}</td>
-          <td>{{item.name}}</td>
-          <td>{{item.price}}</td>
-          <td>
-            {{item.status == 1 ? '上架' : '下架'}}
-            <button
-              @click="goodsUpperToggle(item.status, item.id)"
-              class="btn btn-warning btn-sm">
-              {{item.status == 1 ? '下架' : '上架'}}
-          </button>
-          </td>
-          <td>
-            <router-link class="btn btn-success btn-sm" :to="'/goods/detail/' + item.id">查看</router-link>
-            <router-link class="btn btn-primary btn-sm" :to="'/goods/edit/' + item.id">编辑</router-link>
-          </td>
-        </tr>
-      </template>
-    </Table>
+    <Table
+    :loading="loading"
+    :columns="columns"
+    :data="goodsData.list"/>
     <div class="row">
       <div class="col-sm-12">
-        <div class="pagination-box" style="text-align: right">
-        <uib-pagination
-        :totalItems="totalItems"
-        :items-per-page="parseInt(page.pageSize)"
-        v-model="pagination"
-        :max-size="5"
-        class="pagination-md"
-        :boundary-links="true"
-        :force-ellipses="true"
-        @change="pageChanged">
-       </uib-pagination>
+        <div class="pagination-box">
+          <Pagination
+            :pageTotal="totalItems"
+            @pageChange="pageChanged">
+          </Pagination>
        </div>
       </div>
     </div>
     </v-Card>
-    <dialog />
   </section>
 </template>
 
 <script>
-import table from 'components/table-list/table-list.vue'
-import common from 'utils/common'
-import goods from 'service/goods-service'
+import Table from 'components/table'
+import Tag from 'components/tag'
+import Button from 'components/button'
+import {getGoodsList, setGoodsStatus, getSearchProduct} from 'service/goods-service'
 import {
   mapState,
   mapMutations
 } from 'vuex'
 export default {
-  mixins: [common, goods],
   components: {
-    'Table': table
+    Table
   },
+  name: 'goods',
   data() {
     return {
-      thead: ['商品ID', '商品名称', '价格', '状态', '操作'],
+      columns: [
+        { key: 'id', title: 'ID', align: 'center', width: 100 },
+        { key: 'name', title: '商品名称' },
+        { key: 'price', title: '价格', width: 100, align: 'center' },
+        { key: 'status', title: '状态', width: 100, align: 'center', render: (h, {row, index}) => {
+          return (
+            <Tag type={row.status == 1 ? 'success' : 'warning'}>
+              {row.status == 1 ? '上架' : '下架'}
+            </Tag>
+          )
+        }},
+        { key: 'handler', title: '操作', align: 'center', width: 220, render: (h, {row, index}) => {
+          return (
+            <div class="table-handler">
+              <Button
+                type="warning"
+                size="small"
+                nativeOnClick={(e) => this.goodsUpperToggle(row.status, row.id)}>
+                {row.status == 1 ? '下架' : '上架'}
+              </Button>
+              <router-link
+                style="margin-left: 15px"
+                to={'detail/' + row.id}>
+                <Button type="primary" size="small">
+                  查看
+                </Button>
+
+              </router-link>
+              <router-link
+                style="margin-left: 15px"
+                to={'edit/' + row.id}>
+                <Button size="small">
+                  编辑
+                </Button>
+              </router-link>
+            </div>
+          )
+        }}
+      ],
       goodsData: {},
-      pagination: { currentPage: 1 },
       searchVal: '',
       selected: '',
       id: 'productId',
@@ -89,19 +113,27 @@ export default {
   },
   methods: {
     loadGoodsList(page) {
-      this.getGoodsList(page).then((res) => {
+      getGoodsList(page).then((res) => {
         this.goodsData = res.data
-        this.setPageTotal(this.goodsData.total)
+        this.setPageTotal(this.goodsData.pages)
       })
       .catch((err) => {
-        this.TipsModal({
-          text: err.msg || err.statusText
-        })
+        this.uTerrTips(err.msg || err.response.message)
       })
     },
-    pageChanged() {
-      this.setPageNum(this.pagination.currentPage)
+    pageChanged(pageNum) {
+      this.setPageNum(pageNum)
       this.loadGoodsList(this.page)
+    },
+    // 修改商品上架或下架
+    setStatus(productInfo) {
+      setGoodsStatus(productInfo).then((res) => {
+        this.uTsuccessTips(res.data)
+        this.loadGoodsList(this.page)
+      })
+      .catch((err) => {
+        this.uTerrTips(err.msg || err.response.message)
+      })
     },
     goodsUpperToggle(status, productId) {
       let text = status == 1 ?
@@ -111,24 +143,9 @@ export default {
           productInfo = {
             productId,
             status: newStatus
-          },
-          that = this
-      this.handleModal({
-        text,
-        handler() {
-          // 修改商品上架或下架
-          that.setGoodsStatus(productInfo).then((res) => {
-            that.TipsModal({
-              text: res.data
-            })
-            that.loadGoodsList(that.page)
-          })
-          .catch((err) => {
-            that.TipsModal({
-              text: err.msg || err.statusText
-            })
-          })
-        }
+          }
+      this.uTconfirmTips(text, () => {
+        this.setStatus(productInfo)
       })
     },
     searchProduct() {
@@ -144,30 +161,31 @@ export default {
         return false
       }
       productOp[productSelected] = productSearchVal
-      this.getSearchProduct(productOp).then((res) => {
+      getSearchProduct(productOp).then((res) => {
         this.goodsData = res.data
       })
       .catch((err) => {
-        this.TipsModal({
-          text: err.msg || err
-        })
+        this.uTerrTips(err.msg || err.response.message)
       })
     },
     ...mapMutations(['setPageNum', 'setPageTotal'])
   },
   computed: {
-    ...mapState(['page', 'totalItems'])
+    ...mapState(['page', 'totalItems', 'loading'])
   }
 }
 </script>
 
 <style lang="less" scoped>
-.goods {
+  .goods-from {
+    margin-bottom: 15px;
+  }
   .form-control {
       width: 40%;
+      display: inline-block;
       &:focus {
-        border: 2px solid #1cc09f;
+        border: 1px solid #1cc09f;
       }
   }
-}
+
 </style>

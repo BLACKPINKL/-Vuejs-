@@ -1,13 +1,8 @@
-const statistic = {
-  methods: {
-    getBaseCount() {
-      return this.request({
-        url: '/manage/statistic/base_count.do',
-        method: 'post',
-        data: ''
-      })
-    }
-  }
-}
+import { httpPost } from 'utils/request'
 
-export default statistic
+export const getBaseCount = () => {
+  return httpPost({
+    url: '/manage/statistic/base_count.do',
+    data: ''
+  })
+}

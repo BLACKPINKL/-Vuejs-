@@ -1,8 +1,5 @@
 <template>
-  <div
-  ref="editor"
-  style="text-align:left">
-  </div>
+  <div ref="editor" style="text-align:left"></div>
 </template>
 
 <script>
@@ -67,6 +64,7 @@ export default {
         }
       }
     }
+    that.editor.customConfig.zIndex = 100
     that.editor.create()
     // 禁用编辑
     that.editor.$textElem.attr('contenteditable', that.disabledEditor)

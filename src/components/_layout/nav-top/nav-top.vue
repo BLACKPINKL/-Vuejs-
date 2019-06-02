@@ -1,24 +1,22 @@
 <template>
-  <nav class="navbar navbar-default top-navbar" :style="getNavSideToggle">
-    <ul class="nav navbar-top-links">
+  <nav class="navbar navbar-default top-navbar" :style="{width: getNavTopWidth}">
+    <ul class="navbar-top-links">
       <!-- 侧边栏 toggle -->
       <li class="hamburger-container" @click="navSideToggle">
-        <i class="fa fa-bars fa-2x"></i>
+        <svg-icon iconName="bars"></svg-icon>
       </li>
       <!-- end -->
-      <li class="dropdown navbar-links">
-        <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:;">
-          <i class="fa fa-user fa-lg fa-fw"></i> <i class="fa fa-caret-down"></i>
+      <li class="dropdown navbar-links" @click="show=!show">
+        <a class="dropdown-toggle" href="javascript:;">
+          <svg-icon iconName="dengchu"></svg-icon> <svg-icon iconName="zuojiantou" className="arrow-rotate"></svg-icon>
         </a>
-        <ul class="dropdown-menu dropdown-user">
-          <li><a href="javascript:;"><i class="fa fa-user fa-fw"></i> User Profile</a>
-          </li>
-          <li><a href="javascript:;"><i class="fa fa-gear fa-fw"></i> Settings</a>
+        <ul class="dropdown-menu dropdown-user" v-show="show">
+          <li><a href="https://github.com/BLACKPINKL" target="_blank"><svg-icon iconName="github"></svg-icon> My Github</a>
           </li>
           <li class="divider"></li>
           <li>
-            <a href @click.prevent="userLogout">
-              <i class="fa fa-sign-out fa-fw"></i>退出登录
+            <a href="javascript:;" @click.prevent="userLogout">
+              <svg-icon iconName="dengchu"></svg-icon>退出登录
             </a>
           </li>
         </ul>
@@ -26,70 +24,60 @@
       </li>
         <!-- /.dropdown -->
     </ul>
-    <!-- 模态框 -->
-  <v-dialog />
 </nav>
 </template>
 
 <script>
-import common from 'utils/common'
-import user from 'service/user-service'
-import { mapState } from 'vuex'
+import {logout} from 'service/user-service'
+import { mapState, mapGetters, mapMutations } from 'vuex'
+import { uTremoveUserInfo } from 'utils/cookie'
   export default {
-    mixins: [common, user],
     data() {
       return {
-        navTopToggle: {
-          width: '100%'
-        }
+        show: false
       }
     },
+    name: 'nav-top',
     methods: {
       userLogout() {
-        let that = this
-        this.handleModal({
-          title: 'SIGN OUT',
-          text: '确定退出登录？',
-          buttonText: '退出',
-          handler() {
-            that.handlerLogout()
-          }
+        this.uTconfirmTips('确定退出登录？', () => {
+          this.handlerLogout()
         })
       },
       handlerLogout() {
-        this.logout().then((res) => {
-          this.removeLocalStorage()
-          this.modalHide()
-          this.doLogin()
+        logout().then((res) => {
+          uTremoveUserInfo('userInfo')
+          this.uTdoLogin()
         })
         .catch((err) => {
-          this.TipsModal({
-            text: err.statusText || err.msg
-          })
+          this.uTerrTips(err.msg || err.response.message)
         })
       },
       navSideToggle() {
-        if (this.Mobile()) {
-          this.$store.commit('setIsMobile')
-          return false
+        if (this.navbarToggle) {
+          this.setNavsideWidth('0px')
+        }else {
+          this.setNavsideWidth('260px')
         }
-        this.$store.commit('setNavbarToggle')
+        this.setNavbarToggle()
       },
-      // 点击时 判断当前屏幕宽度是否是移动端
-      Mobile() {
-        let { body } = document
-        let rect = body.getBoundingClientRect()
-        return (rect.width - 1) < this.pageWidth
-      }
+      ...mapMutations(['setNavsideWidth', 'setNavbarToggle'])
     },
     computed: {
-      getNavSideToggle() {
-        if (this.isMobile) {
-          return null
+      ...mapGetters(['getIsMobile']),
+      ...mapState(['navsideWidth', 'navbarToggle']),
+      getNavTopWidth() {
+        if (this.getIsMobile) {
+          return '100%'
         }
-        return this.$store.state.navbarToggle ? this.navTopToggle : null
-      },
-      ...mapState(['isMobile', 'pageWidth'])
+        return `calc(100% - ${this.navsideWidth})`
+      }
     }
   }
 </script>
+
+<style lang="less" scoped>
+.arrow-rotate {
+  transform: rotate(-90deg);
+}
+</style>

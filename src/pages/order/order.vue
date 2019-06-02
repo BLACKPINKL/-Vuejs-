@@ -1,78 +1,80 @@
 <template>
   <section class="order">
     <v-Card>
-    <div class="row">
+    <div class="row order-from">
       <div class="col-md-12">
-
         <select class="form-control">
           <option>按订单号查询</option>
         </select>
         <input v-model="orderNo" type="text" class="form-control">
-        <button @click="handlerSearchOrder" class="btn btn-md btn-success">搜索</button>
+        <Button
+          @click.native="handlerSearchOrder"
+          type="success">
+          <svg-icon iconName="chaxun"/>
+          搜索
+        </Button>
+        <!-- <button @click="handlerSearchOrder" class="btn btn-md btn-success">搜索</button> -->
       </div>
     </div>
-    <Table :thead="thead">
-      <template v-slot:tbody>
-          <tr v-for="(item, index) in tableData.list" :key="index">
-            <td>{{ item.orderNo }}</td>
-            <td>{{ item.receiverName }}</td>
-            <td>{{ item.statusDesc }}</td>
-            <td>{{ item.payment }}</td>
-            <td>{{ item.createTime }}</td>
-            <td><router-link :to="'/order/detail/' + item.orderNo" class="btn btn-sm btn-primary">查看</router-link></td>
-          </tr>
-      </template>
-    </Table>
+    <Table
+    :loading="loading"
+    :columns="columns"
+    :data="tableData.list"/>
     <div class="row">
       <div class="col-sm-12">
-        <div class="pagination-box" style="text-align: right">
-        <uib-pagination
-        :totalItems="totalItems"
-        :items-per-page="parseInt(page.pageSize)"
-        v-model="pagination"
-        :max-size="5"
-        class="pagination-md"
-        :boundary-links="true"
-        :force-ellipses="true"
-        @change="pageChanged">
-       </uib-pagination>
+        <div class="pagination-box">
+          <Pagination
+            :pageTotal="totalItems"
+            @pageChange="pageChanged">
+          </Pagination>
        </div>
       </div>
       </div>
     </v-Card>
-    <dialog />
   </section>
 </template>
 
 <script>
-import table from 'components/table-list/table-list.vue'
-import common from 'utils/common'
-import order from 'service/order-service'
+import Table from 'components/table'
+import Tag from 'components/tag'
+import Button from 'components/button'
+import { getOrderList, getSearchOrder } from 'service/order-service'
 import {
   mapState,
   mapMutations,
   mapGetters
 } from 'vuex'
 export default {
-  mixins: [common, order],
+  name: 'order',
   components: {
-    'Table': table
+    Table,
+    Button,
+    Tag
   },
   data() {
     return {
-      thead: [
-        '订单号',
-        '收件人',
-        '订单状态',
-        '订单总价',
-        '创建时间',
-        '操作'
+      columns: [
+        { key: 'orderNo', title: '订单号', align: 'center', width: 170 },
+        { key: 'receiverName', title: '收件人' },
+        { key: 'statusDesc', title: '订单状态', width: 100, align: 'center', render: (h, {row, index, column}) => {
+          return (
+            <Tag type={row.status === 0 ? 'success' : 'warning'}>{row[column.key]}</Tag>
+          )
+        }},
+        { key: 'payment', title: '订单总价', width: 120, align: 'center' },
+        { key: 'createTime', title: '创建时间', align: 'center', width: 210 },
+        { key: 'handler', title: '操作', align: 'center', width: 100, render(h, {row, i}) {
+          return (
+            <router-link to={'/order/detail/' + row.orderNo}>
+              <Button type="primary" size="small">
+                查看
+              </Button>
+            </router-link>
+          )
+        }}
       ],
       tableData: {},
-      orderNo: '',
-      pagination: {
-        currentPage: 1
-      }
+      orderNo: ''
     }
   },
   created() {
@@ -80,30 +82,26 @@ export default {
   },
   methods: {
     loadOrderList(page) {
-      this.getOrderList(page).then((res) => {
-        this.tableData = res.data
-        this.setPageTotal(this.tableData.total)
+      getOrderList(page).then((res) => {
+        this.tableData = Object.freeze(res.data)
+        this.setPageTotal(this.tableData.pages)
       })
       .catch((err) => {
-        this.TipsModal({
-          text: err.msg || err.statusText
-        })
+        this.uTerrTips(err.msg || err.response.message)
       })
     },
     loadSearchOrder(orderNo) {
-      this.getSearchOrder(orderNo).then((res) => {
+      getSearchOrder(orderNo).then((res) => {
         this.tableData = res.data
-        this.setPageTotal(this.tableData.total)
+        this.setPageTotal(this.tableData.pages)
       })
       .catch((err) => {
-        this.TipsModal({
-          text: err.msg || err.statusText
-        })
+        this.uTerrTips(err.msg || err.response.message)
       })
     },
-    pageChanged() {
-      this.setPageNum(this.pagination.currentPage)
-      this.loadOrderList(this.page)
+    pageChanged(pageNum) {
+        this.setPageNum(pageNum)
+        this.loadOrderList(this.page)
     },
     // 搜索订单号
     handlerSearchOrder() {
@@ -118,14 +116,20 @@ export default {
     ...mapMutations(['setPageNum', 'setPageTotal'])
   },
   computed: {
-    ...mapState(['page', 'totalItems'])
+    ...mapState(['page', 'totalItems', 'loading'])
   }
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
+  .order-from {
+    margin-bottom: 10px;
+  }
   .form-control {
     display: inline-block;
     width: 15%;
+    &:focus {
+      border: 1px solid #1cc09f;
+    }
   }
 </style>

@@ -1,35 +1,175 @@
-import index from 'pages/index/index.vue'
-import home from 'pages/home/home.vue'
-import login from 'pages/login/login.vue'
-import order from 'pages/order/order.vue'
-import orderDetail from 'pages/order/detail/order-detail.vue'
-import user from 'pages/user/user.vue'
-import goods from 'pages/goods/goods.vue'
-import goodsSave from 'pages/goods/save/save.vue'
-import goodsCategory from 'pages/goods/category/category.vue'
-import addCategory from 'pages/goods/category/add-category/add-category.vue'
+import index from 'pages/index/index'
+import err404 from 'pages/404'
+import statistic from 'pages/statistic/statistic'
+import login from 'pages/login/login'
+import order from 'pages/order/order'
+import orderDetail from 'pages/order/detail/order-detail'
+import user from 'pages/user/user'
+import goods from 'pages/goods/goods'
+import goodsAdd from 'pages/goods/goods-add'
+import goodsCategory from 'pages/goods/category/category'
 
 const routes = [
   {
+    path: '*',
+    redirect: '/err_404',
+    hidden: true
+  },
+  {
     path: '/',
-    redirect: '/home',
+    redirect: 'statistic',
     component: index,
+    name: 'statistic',
     children: [
-      { path: '/home', component: home, name: 'Home' },
-      { path: '/order', component: order, name: 'Order' },
-      { path: '/order/detail/:orderNo', component: orderDetail, name: 'OrderDetail', props: true},
-      { path: '/user', component: user, name: 'User' },
-      { path: '/goods', component: goods, name: 'Goods' },
-      { path: '/goods/save', component: goodsSave, name: 'GoodsSave' },
-      { path: '/goods/edit/:categoryId', component: goodsSave, name: 'GoodsEdit' },
-      { path: '/goods/detail/:categoryId', component: goodsSave, name: 'GoodsDetail' },
-      { path: '/goods/category', component: goodsCategory, name: 'goodsCategory' },
-      { path: '/goods/category/children/:id', component: goodsCategory, name: 'categoryChildren' },
-      { path: '/goods/category/save', component: addCategory, name: 'addCategory' }
-
+      {
+        path: 'statistic',
+        component: statistic,
+        name: 'Statistic',
+        meta: {
+          title: '数据统计',
+          icon: 'tongji',
+          noCache: true
+        }
+      }
     ]
   },
-  { path: '/login', component: login, hidden: true, name: 'Login' }
+  {
+    path: '/err_404',
+    name: 'err-404',
+    component: err404,
+    hidden: true
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: login,
+    hidden: true
+  },
+  {
+    path: '/order',
+    name: 'order',
+    component: index,
+    children: [
+      {
+        path: 'index',
+        name: 'Order',
+        meta: {
+          title: '订单',
+          icon: 'wodedingdan'
+        },
+        component: order
+      },
+      {
+        path: 'detail/:orderNo',
+        name: 'OrderDetail',
+        meta: {
+          title: '订单详情',
+          icon: 'xiangqing',
+          activeMenu: '/order/index',
+          noCache: true
+        },
+        hidden: true,
+        props: true,
+        component: orderDetail
+      }
+    ]
+  },
+  {
+    path: '/user',
+    redirect: '/user/index',
+    name: 'user',
+    component: index,
+    children: [
+      {
+        path: 'index',
+        name: 'User',
+        component: user,
+        meta: {
+          title: '用户',
+          icon: 'yonghu'
+        }
+      }
+    ]
+  },
+  {
+    path: '/goods',
+    name: 'goods',
+    redirect: '/goods/index',
+    component: index,
+    meta: {
+      title: '商品',
+      icon: 'shangpin'
+    },
+    children: [
+      {
+        path: 'index',
+        name: 'Goods',
+        component: goods,
+        meta: {
+          title: '商品管理',
+          icon: 'shangpin'
+        }
+      },
+      {
+        path: 'add',
+        name: 'GoodsAdd',
+        component: goodsAdd,
+        meta: {
+          title: '添加商品',
+          icon: 'add',
+          activeMenu: '/goods/index',
+          noCache: true
+        },
+        hidden: true
+      },
+      {
+        path: 'edit/:categoryId',
+        name: 'GoodsEdit',
+        component: goodsAdd,
+        meta: {
+          title: '编辑商品',
+          icon: 'bianji',
+          activeMenu: '/goods/index',
+          noCache: true
+        },
+        hidden: true
+      },
+      {
+        path: 'detail/:categoryId',
+        name: 'GoodsDetail',
+        component: goodsAdd,
+        meta: {
+          title: '商品详情',
+          icon: 'xiangqing',
+          activeMenu: '/goods/index',
+          noCache: true
+        },
+        hidden: true
+      },
+      {
+        path: 'category',
+        name: 'Category',
+        component: goodsCategory,
+        meta: {
+          title: '品类管理',
+          icon: 'pinlei',
+          noCache: true
+        }
+      },
+      {
+        path: 'category-children/:id',
+        name: 'CategoryChildren',
+        component: goodsCategory,
+        meta: {
+          title: '二级品类',
+          icon: 'pinlei',
+          activeMenu: '/goods/category',
+          noCache: true
+        },
+        hidden: true
+      }
+    ]
+  }
 ]
 
 export default routes

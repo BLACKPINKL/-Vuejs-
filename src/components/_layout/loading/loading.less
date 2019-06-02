@@ -1,0 +1,43 @@
+@color: #46a6ff, #ffc833, #ff6d6d, #FF69B4;
+
+.for(@_color) {
+  .loop(@count: 2, @_num: 0.1) when (@count <= length(@_color) + 1) {
+    .rect@{count} {
+      animation-delay: -(1s - @_num);
+      background-color: extract(@_color, @count - 1);
+    }
+    .loop(@count + 1, @_num + 0.1);
+  }
+   .loop();
+}
+
+.spinner {
+  display: flex;
+  justify-content: center;
+  height: 60px;
+  position: absolute;
+  top: 90px;
+  left: 50%;
+  z-index: 50;
+  transform: translateX(-50%);
+  .for(@color);
+}
+
+.spinner > div {
+  background-color: #1cc09f;
+  height: 100%;
+  width: 6px;
+  margin-right: 6px;
+  display: inline-block;
+  animation: stretchdelay 1.2s infinite ease-in-out;
+}
+
+@keyframes stretchdelay {
+  0%, 40%, 100% {
+    transform: scaleY(0.4);
+    -webkit-transform: scaleY(0.4);
+  }  20% {
+    transform: scaleY(1.0);
+    -webkit-transform: scaleY(1.0);
+  }
+}
