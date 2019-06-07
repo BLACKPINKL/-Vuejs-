@@ -29,6 +29,12 @@ export default {
   showLoading(state) {
     state.loading = true
   },
+  toggleDropdown(state) {
+    state.dropdown = !state.dropdown
+  },
+  closeDropdown(state) {
+    state.dropdown = false
+  },
   closeLoading(state) {
     state.loading = false
   },

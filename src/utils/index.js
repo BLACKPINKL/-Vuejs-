@@ -22,6 +22,34 @@ export const findComponentsDownward = (context, componentName) => {
   }, [])
 }
 
+export const addClass = (el, className) => {
+  if (!el || !className.length) return
+  let classNames = el.className
+  for (let i = 0, len = className.length; i < len; i++) {
+    let cls = className[i]
+    if (el.classList) {
+      el.classList.add(cls)
+    } else {
+      classNames += ' ' + cls
+    }
+  }
+  if (!el.classList) el.className = classNames
+}
+
+export const removeClass = (el, className) => {
+  if (!el || !className.length) return
+  let classNames = ' ' + el.className + ' '
+  for (let i = 0, len = className.length; i < len; i++) {
+    let cls = className[i]
+    if (el.classList) {
+      el.classList.remove(cls)
+    }else {
+      classNames = classNames.replace(' ' + cls + ' ', ' ')
+    }
+  }
+  if (!el.classList) el.className = classNames
+}
+
 // 生成随机id
 export const randomId = (len) => {
   return Math.random().toString(36).substr(3, len)
@@ -35,7 +63,7 @@ export const resolvePath = (basePath, path) => {
   return Path.resolve(basePath, path)
 }
 
-//
+// 已打开的submenu
 export const getOpenedNames = (routerList, name) => {
   let arr = []
   routerList.some(item => {
@@ -54,6 +82,7 @@ export const getOpenedNames = (routerList, name) => {
   return arr
 }
 
+// 数据类型检测
 export const typeOf = (obj) => {
     const toString = Object.prototype.toString
     const map = {
@@ -90,7 +119,9 @@ export const deepCopy = (data) => {
       }
     } else if ( t === 'object') {
       for (let i in data) {
-        o[i] = deepCopy(data[i])
+        if (Object.prototype.hasOwnProperty.call(data, i)) {
+          o[i] = deepCopy(data[i])
+        }
       }
     }
     return o

@@ -183,6 +183,14 @@ color: #225081;
 background:none;
 }
 
+.sidebar-collapse {
+  overflow: scroll;
+  margin-right: -17px;
+}
+.sidebar-collapse-wrap {
+  overflow-x: hidden !important;
+}
+
 .sidebar-collapse , .sidebar-collapse .nav{
 	background:none;
   background-color: rgb(40, 54, 67);

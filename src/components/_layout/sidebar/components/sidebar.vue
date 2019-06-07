@@ -57,14 +57,5 @@ export default {
 </script>
 
 <style lang="less">
-// .nav-side {
-//   position: absolute;
-//   top: 0;
-//   left: 0;
-//   height: 100%;
-//   z-index: 200;
-//   background-color: skyblue;
-//   overflow: hidden;
-//   transition: width .3s linear;
-// }
+
 </style>

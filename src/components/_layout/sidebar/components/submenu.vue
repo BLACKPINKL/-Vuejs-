@@ -5,15 +5,21 @@
       <slot name="title"></slot>
       <svg-icon iconName="zuojiantou" :className="iconClasses"></svg-icon>
     </div>
-    <ul :class="classes">
-      <slot></slot>
-    </ul>
+    <Collapse-transition>
+      <ul class="submenu-list" v-show="opened">
+        <slot></slot>
+      </ul>
+    </Collapse-transition>
   </li>
 </template>
 
 <script>
+import CollapseTransition from 'components/collapse-transition'
 export default {
   name: 'Submenu',
+  components: {
+    CollapseTransition
+  },
   props: {
     icon: {
       type: String,
@@ -35,12 +41,6 @@ export default {
     }
   },
   computed: {
-    classes() {
-      return [
-        'nav',
-        { 'submenu-show': this.opened }
-      ]
-    },
     rotateClassName() {
       return this.opened ? 'rotate' : ''
     },
@@ -55,26 +55,11 @@ export default {
 </script>
 
 <style lang="less">
-.nav {
-  max-height: 0px;
+.submenu-list {
   overflow: hidden;
   position: relative;
+  padding: 0;
   background: #17191B !important;
-  transition: max-height .3s ease-out;
-  &.submenu-show {
-    max-height: 1000px;
-    transition: max-height .3s ease-out;
-  }
-}
-.icon-arrow {
-  position: absolute;
-  right: 5px;
-  width: 1.2em;
-  height: 1.2em;
-  fill: #1cc09f;
-  transition: transform .3s;
-  &.rotate {
-    transform: rotate(-90deg);
-  }
+  transition: all .23s;
 }
 </style>

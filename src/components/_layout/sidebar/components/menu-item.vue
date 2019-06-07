@@ -53,6 +53,5 @@ export default {
 .menu-item {
   display: block;
   overflow: hidden;
-  padding: 0 20px;
 }
 </style>

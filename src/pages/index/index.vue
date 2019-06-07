@@ -77,7 +77,12 @@ import {
         return this.cacheRoutes
       },
       ...mapGetters(['getIsMobile']),
-      ...mapState(['navsideWidth', 'navbarToggle','routerName', 'cacheRoutes']),
+      ...mapState([
+        'navsideWidth',
+        'navbarToggle',
+        'routerName',
+        'cacheRoutes'
+      ]),
       // 移动端内容区不进行width计算
       getMobile() {
         return this.getIsMobile ? '' : this.navsideWidth

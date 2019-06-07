@@ -42,6 +42,7 @@ export default {
     return {
       edittingId: -1, //自定义编辑时的标志
       editVal: '', //修改的值
+      oldEditVal: '',
       columns: [
         { key: 'id', title: 'ID', align: 'center', width: 100 },
         { key: 'name', title: '品类名称', render: (h, {row, index, column}) => {
@@ -194,12 +195,19 @@ export default {
     handleEdit(row, i) {
       this.edittingId = i
       this.editVal = row.name
+      // 保存原始值
+      this.oldEditVal = row.name
     },
     // 点击保存触发
     handleSave(row) {
 
       if (!this.editVal) {
         this.uTerrTips('修改名称不能为空！')
+        return
+      }
+      // 如果新的值和原始值相等 停止执行并隐藏输入框
+      if (this.editVal === this.oldEditVal) {
+        this.handleCancel()
         return
       }
       // 调用接口发给后端
@@ -211,6 +219,7 @@ export default {
         this.loadCategoryList()
       })
     },
+    // 取消编辑
     handleCancel(e) {
       this.edittingId = -1
       this.editVal = ''

@@ -1,6 +1,5 @@
 .menu {
   .menu-item {
-    padding-left: 10px;
     color: #B5B5B5;
     border-bottom: 1px solid rgba(107, 108, 109, 0.19);
     transition: background-color .25s;
@@ -26,7 +25,20 @@
   .submenu {
     padding-left: 0;
     .submenu-title {
-      padding-left: 30px;
+      position: relative;
+      .icon-arrow {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        margin-top: -10px;
+        width: 1.2em;
+        height: 1.2em;
+        fill: #1cc09f;
+        transition: transform .3s;
+        &.rotate {
+          transform: rotate(-90deg);
+        }
+      }
     }
   }
 }

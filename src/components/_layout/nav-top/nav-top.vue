@@ -3,20 +3,20 @@
     <ul class="navbar-top-links">
       <!-- 侧边栏 toggle -->
       <li class="hamburger-container" @click="navSideToggle">
-        <svg-icon iconName="bars"></svg-icon>
+        <svg-icon iconName="bars"/>
       </li>
       <!-- end -->
-      <li class="dropdown navbar-links" @click="show=!show">
+      <li class="dropdown navbar-links" @click.stop="handleDropdown">
         <a class="dropdown-toggle" href="javascript:;">
-          <svg-icon iconName="dengchu"></svg-icon> <svg-icon iconName="zuojiantou" className="arrow-rotate"></svg-icon>
+          <svg-icon iconName="dengchu"/> <svg-icon iconName="zuojiantou" className="arrow-rotate"/>
         </a>
-        <ul class="dropdown-menu dropdown-user" v-show="show">
+        <ul class="dropdown-menu dropdown-user" v-show="dropdown">
           <li><a href="https://github.com/BLACKPINKL" target="_blank"><svg-icon iconName="github"></svg-icon> My Github</a>
           </li>
           <li class="divider"></li>
           <li>
-            <a href="javascript:;" @click.prevent="userLogout">
-              <svg-icon iconName="dengchu"></svg-icon>退出登录
+            <a href="javascript:;" ref="dropdLogout">
+              <svg-icon iconName="dengchu"/>退出登录
             </a>
           </li>
         </ul>
@@ -32,13 +32,14 @@ import {logout} from 'service/user-service'
 import { mapState, mapGetters, mapMutations } from 'vuex'
 import { uTremoveUserInfo } from 'utils/cookie'
   export default {
-    data() {
-      return {
-        show: false
-      }
-    },
     name: 'nav-top',
     methods: {
+      handleDropdown(e) {
+        this.toggleDropdown()
+        if (e.target === this.$refs.dropdLogout) {
+          this.userLogout()
+        }
+      },
       userLogout() {
         this.uTconfirmTips('确定退出登录？', () => {
           this.handlerLogout()
@@ -61,11 +62,11 @@ import { uTremoveUserInfo } from 'utils/cookie'
         }
         this.setNavbarToggle()
       },
-      ...mapMutations(['setNavsideWidth', 'setNavbarToggle'])
+      ...mapMutations(['setNavsideWidth', 'setNavbarToggle', 'toggleDropdown'])
     },
     computed: {
       ...mapGetters(['getIsMobile']),
-      ...mapState(['navsideWidth', 'navbarToggle']),
+      ...mapState(['navsideWidth', 'navbarToggle', 'dropdown']),
       getNavTopWidth() {
         if (this.getIsMobile) {
           return '100%'

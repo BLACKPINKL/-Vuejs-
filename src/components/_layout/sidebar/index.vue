@@ -1,7 +1,7 @@
 <template>
   <!-- navside -->
   <nav :class="['navbar-default', 'navbar-side', {'mobile-navside': getIsMobile}]" :style="{width: navsideWidth}">
-      <div class="sidebar-collapse">
+      <div class="sidebar-collapse sidebar-collapse-wrap">
         <div class="navbar-logo">
           <router-link class="navbar-brand" to="/">
             <svg-icon iconName="logo" className="logo"></svg-icon>
@@ -17,7 +17,7 @@
               <p class="user-msg">Frontend Developer</p>
             </div>
           </div>
-            <sidebar-menu></sidebar-menu>
+            <sidebar-menu/>
       </div>
   </nav>
 </template>

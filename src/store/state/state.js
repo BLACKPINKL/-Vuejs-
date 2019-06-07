@@ -10,11 +10,9 @@ export default {
   routerName: '',
   // 侧边栏切换
   navbarToggle: true,
-  // show: false,
-  // isTips: false,
+  dropdown: false,
   loading: true,
   navsideWidth: '260px',
-  // activeClass: '/statistic',
   // 需要缓存的路由name
   cacheRoutes: []
 }
