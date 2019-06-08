@@ -1,16 +1,31 @@
 <template>
-  <router-link class="" :to="to" class="menu-link">
+  <router-link
+    :to="to"
+    class="menu-link"
+    :style="itemStyle">
     <slot></slot>
   </router-link>
 </template>
 
 <script>
+import mixin from './mixin'
 export default {
   name: 'menu-item-link',
+  mixins: [mixin],
   props: {
     to: {
       type: String,
       default: 'javascript:;'
+    }
+  },
+  computed: {
+    itemStyle() {
+      let len = this.findsubMenusNum
+      if (len) {
+        return {
+          paddingLeft: 35 + (len -1) * 24 + 'px'
+        }
+      }
     }
   }
 }

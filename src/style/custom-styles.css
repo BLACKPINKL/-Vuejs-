@@ -87,6 +87,7 @@ li {
   display: block;
   top: 40px;
   left: -88px;
+  transition: all .1s;
 }
 #page-wrapper {
   position: relative;

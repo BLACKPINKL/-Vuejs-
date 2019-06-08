@@ -1,6 +1,6 @@
 <template>
   <li class="submenu menu-item">
-    <div class="submenu-title menu-link" @click.stop="handleClick">
+    <div class="submenu-title menu-link" @click.stop="handleClick" :style="itemStyle">
       <svg-icon :iconName="icon" :iconClass="icon"></svg-icon>
       <slot name="title"></slot>
       <svg-icon iconName="zuojiantou" :className="iconClasses"></svg-icon>
@@ -15,11 +15,13 @@
 
 <script>
 import CollapseTransition from 'components/collapse-transition'
+import mixin from './mixin'
 export default {
   name: 'Submenu',
   components: {
     CollapseTransition
   },
+  mixins: [mixin],
   props: {
     icon: {
       type: String,
@@ -49,6 +51,14 @@ export default {
         'icon-arrow',
         this.rotateClassName
       ]
+    },
+    itemStyle() {
+      let len = this.findsubMenusNum
+      if (len) {
+        return {
+          paddingLeft: 35 + (len -1) * 24 + 'px'
+        }
+      }
     }
   }
 }

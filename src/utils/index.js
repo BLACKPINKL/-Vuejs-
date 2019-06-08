@@ -11,6 +11,19 @@ export const findComponentUpward = (context, componentName) => {
   return parent
 }
 
+export const findComponentsUpward = (context, componentName) => {
+  let parent = context.$parent
+  let arr = []
+  if (parent) {
+    if (parent.$options.name === componentName) {
+      arr.push(parent)
+    }
+    return arr.concat(findComponentsUpward(parent, componentName))
+  }else {
+    return []
+  }
+}
+
 // 向下寻找指定的所有的组件 返回一个数组
 export const findComponentsDownward = (context, componentName) => {
   return context.$children.reduce((components, child) => {

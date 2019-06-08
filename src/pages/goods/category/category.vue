@@ -15,6 +15,7 @@
           </div>
           <div class="pagination-box">
             <Pagination
+              ref="Pagination"
               :pageTotal="totalItems"
               @pageChange="pageChanged">
             </Pagination>
@@ -216,7 +217,10 @@ export default {
         categoryName: this.editVal
       }).then(res => {
         this.handleCancel()
-        this.loadCategoryList()
+        // 小bug  当数据修改成功时，此时需要手动更新当前分页
+        this.pagination(page.pageNum)
+        // 在更新视图  不然数据显示的一页的，而页码是修改的那一页
+        loadCategoryList()
       })
     },
     // 取消编辑

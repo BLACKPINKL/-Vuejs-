@@ -6,6 +6,7 @@
 
 <script>
 import { findComponentUpward } from 'utils'
+
 export default {
   name: 'menu-item',
   props: {
