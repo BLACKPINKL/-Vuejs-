@@ -15,7 +15,7 @@ import menu2_2 from 'pages/nested/menu2/menu2-2'
 import menu2_3 from 'pages/nested/menu2/menu2-3'
 import menu2_2_1 from 'pages/nested/menu2/menu2-2/menu2-2-1'
 import menu2_2_2 from 'pages/nested/menu2/menu2-2/menu2-2-2'
-
+import tabs from 'pages/tab/tab'
 const routes = [
   {
     path: '*',
@@ -252,6 +252,22 @@ const routes = [
             }
           }
         ]
+      }
+    ]
+  },
+  {
+    path: '/tabs',
+    component: index,
+    name: 'tabs',
+    children: [
+      {
+        path: 'index',
+        component: tabs,
+        name: 'Tabs',
+        meta: {
+          icon: 'tab',
+          title: 'Tabs'
+        }
       }
     ]
   }
