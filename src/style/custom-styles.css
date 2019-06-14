@@ -34,6 +34,14 @@ button[disabled]:hover,button[disabled]:active, button[disabled]:focus {
 .active-menu {
   background-color: #1cc09f !important;
 }
+.echarts {
+  width: 100%;
+
+}
+.echarts div {
+  width: 100% !important;
+}
+
 
 h1, .h1, h2, .h2, h3, .h3 {
 margin-top: 7px;

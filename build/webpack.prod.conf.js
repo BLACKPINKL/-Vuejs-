@@ -58,6 +58,7 @@ module.exports = merge(baseConfig, {
       chunkFilename: "css/[id].[name].[contenthash:8].css"
       // allChunks: true
     }),
+    // 前端开启gzip压缩
     // new CompressionPlugin({
     //   filename: '[path].gz[query]',
     //   algorithm: 'gzip',

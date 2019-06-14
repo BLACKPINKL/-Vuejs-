@@ -17,33 +17,39 @@
     </div>
     <div class="col-md-6">
       <v-Card>
-        <Ve-histogram :settings="histogramOp" width="100%" :data="histogramData"></Ve-histogram>
+        <v-charts :options="bar"></v-charts>
       </v-Card>
     </div>
     <div class="col-md-6">
       <v-Card>
-        <Ve-pie :data="pieData" width="100%"></Ve-pie>
+        <v-charts :options="pie"></v-charts>
       </v-Card>
     </div>
     <div class="col-md-12">
       <v-Card>
-        <Ve-line :data="lineData" width="100%"></Ve-line>
+        <v-charts :options="gauge"></v-charts>
       </v-Card>
     </div>
   </div>
 </template>
 
 <script>
-import VeLine from 'v-charts/lib/line.common'
-import VeHistogram from 'v-charts/lib/histogram.common'
-import VePie from 'v-charts/lib/pie.common'
+import vCharts from 'vue-echarts'
+import 'echarts/lib/component/title'
+import 'echarts/lib/component/legend'
+import 'echarts/lib/chart/line'
+import 'echarts/lib/chart/bar'
+import 'echarts/lib/chart/gauge'
+import 'echarts/lib/chart/pie'
+
+import bar from './data/bar'
+import pie from './data/pie'
+import gauge from './data/gauge'
 import { getBaseCount } from 'service/statistic-service'
 import CountTo from 'vue-count-to'
   export default {
     components: {
-      VeLine,
-      VeHistogram,
-      VePie,
+      vCharts,
       CountTo
     },
     name: 'statistic',
@@ -51,11 +57,6 @@ import CountTo from 'vue-count-to'
       this.loadBaseCount()
     },
     data() {
-      this.histogramOp = {
-        axisSite: { right: ['下单率'] },
-        yAxisType: ['KMB', 'percent'],
-        yAxisName: ['数值', '比率']
-      }
       return {
         countList: [
           { startVal: 0, endVal: 100, duration: 3000, name: '用户总数', icon: 'yonghu' },
@@ -64,39 +65,9 @@ import CountTo from 'vue-count-to'
         ],
         baseCount: {},
         baseCountKeys: [],
-        lineData: {
-          columns: ['日期', '访问用户', '下单用户', '下单率'],
-          rows: [
-            { '日期': '1/1', '访问用户': 1393, '下单用户': 1093, '下单率': 0.32 },
-            { '日期': '1/2', '访问用户': 3530, '下单用户': 3230, '下单率': 0.26 },
-            { '日期': '1/3', '访问用户': 2923, '下单用户': 2623, '下单率': 0.76 },
-            { '日期': '1/4', '访问用户': 1723, '下单用户': 1423, '下单率': 0.49 },
-            { '日期': '1/5', '访问用户': 3792, '下单用户': 3492, '下单率': 0.323 },
-            { '日期': '1/6', '访问用户': 4593, '下单用户': 4293, '下单率': 0.78 }
-          ]
-        },
-        histogramData: {
-          columns: ['日期', '访问用户', '下单用户', '下单率'],
-          rows: [
-            { '日期': '1/1', '访问用户': 1393, '下单用户': 1093, '下单率': 0.32 },
-            { '日期': '1/2', '访问用户': 3530, '下单用户': 3230, '下单率': 0.26 },
-            { '日期': '1/3', '访问用户': 2923, '下单用户': 2623, '下单率': 0.76 },
-            { '日期': '1/4', '访问用户': 1723, '下单用户': 1423, '下单率': 0.49 },
-            { '日期': '1/5', '访问用户': 3792, '下单用户': 3492, '下单率': 0.323 },
-            { '日期': '1/6', '访问用户': 4593, '下单用户': 4293, '下单率': 0.78 }
-          ]
-        },
-        pieData: {
-          columns: ['日期', '访问用户'],
-          rows: [
-            { '日期': '1/1', '访问用户': 1393 },
-            { '日期': '1/2', '访问用户': 3530 },
-            { '日期': '1/3', '访问用户': 2923 },
-            { '日期': '1/4', '访问用户': 1723 },
-            { '日期': '1/5', '访问用户': 3792 },
-            { '日期': '1/6', '访问用户': 4593 }
-          ]
-        }
+        bar,
+        pie,
+        gauge
       }
     },
     methods: {
