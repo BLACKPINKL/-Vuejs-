@@ -2,7 +2,7 @@
   <v-Card>
     <Tabs value="pane1">
       <Tabs-pane name="pane1" label="pane1">
-        <vCharts :options="polar"></vCharts>
+        <v-charts :options="polar"></v-charts>
       </Tabs-pane>
       <Tabs-pane name="pane2" label="pane2">
         2

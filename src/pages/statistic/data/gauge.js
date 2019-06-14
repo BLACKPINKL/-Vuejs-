@@ -1,147 +1,120 @@
-var dataStyle = {
-    normal: {
-        label: {show:false},
-        labelLine: {show:false},
-        shadowBlur: 40,
-        shadowColor: 'rgba(40, 40, 40, 0.5)',
+function rand(m, n) {
+    if (!n) {
+        return Math.floor(Math.random() * m);
+    } else {
+        var c = n - m + 1;
+        return Math.floor(Math.random() * c + m);
     }
-};
-var placeHolderStyle = {
-    normal : {
-        color: 'rgba(0,0,0,0)',
-        label: {show:false},
-        labelLine: {show:false}
-    },
-    emphasis : {
-        color: 'rgba(0,0,0,0)'
-    }
-};
-let option =  {
-   backgroundColor: '#f4f2e3',
-     color: ['#85b6b2', '#6d4f8d','#cd5e7e', '#e38980','#f7db88'],
-    tooltip : {
-        show: true,
-        formatter: "{a} <br/>{b} : {c} ({d}%)"
-    },
-    legend: {
-        itemGap:12,
+}
 
-        top: '87%',
-        data:['01','02','03','04','05','06']
-    },
-    toolbox: {
-        show : true,
-        feature : {
-            mark : {show: true},
-            dataView : {show: true, readOnly: false},
-            restore : {show: true},
-            saveAsImage : {show: true}
+function getMax(arr, key) {
+    var max = 0,
+        len = arr.length;
+    for (var i = 0; i < len; i++) {
+        var item = arr[i][key];
+        if (max < item) max = item;
+    }
+    return max;
+}
+
+function getValArr(arr, key) {
+    var val = [],
+        len = arr.length;
+    for (var i = 0; i < len; i++) {
+        val.push(arr[i][key]);
+    }
+    return val;
+}
+
+var arr = [];
+for (var i = 0; i < 10; i++) {
+    arr.push({
+        name: '类目名称' + rand(99),
+        amount: rand(99999) / 100 // 采购金额
+    });
+}
+
+var max = getMax(arr, 'amount'),
+    angleAxisData = getValArr(arr, 'name');
+arr.forEach((item, i) => {
+  item.value = (item.amount / max * 100).toFixed(2);
+})
+let option = {
+    backgroundColor: '#222',
+    tooltip: {
+        trigger: 'item',
+        textStyle: {
+            fontSize: 16,
+            color: '#fff',
+            fontFamily: 'Microsoft YaHei'
         }
     },
-    series : [
-        {
-            name:'Line 1',
-            type:'pie',
-            clockWise:false,
-            radius : [180,200],
-            itemStyle : dataStyle,
-            hoverAnimation: false,
-
-            data:[
-                {
-                    value:300,
-                    name:'01'
-                },
-                {
-                    value:50,
-                    name:'invisible',
-                    itemStyle : placeHolderStyle
-                }
-
-            ]
+    angleAxis: {
+        type: 'category',
+        axisLine: {
+            lineStyle: {
+                color: '#6d8a92'
+            }
         },
-         {
-            name:'Line 2',
-            type:'pie',
-            clockWise:false,
-            radius : [160, 180],
-            itemStyle : dataStyle,
-            hoverAnimation: false,
-
-            data:[
-                {
-                    value:150,
-                    name:'02'
-                },
-                {
-                    value:60,
-                    name:'invisible',
-                    itemStyle : placeHolderStyle
-                }
-            ]
+        axisLabel: {
+            interval: 0,
+            fontSize: 14,
+            color: '#fff',
+            fontFamily: 'Microsoft YaHei'
         },
-        {
-            name:'Line 3',
-            type:'pie',
-            clockWise:false,
-            hoverAnimation: false,
-            radius : [140, 160],
-            itemStyle : dataStyle,
-
-            data:[
-                {
-                    value:80,
-                    name:'03'
-                },
-                {
-                    value:50,
-                    name:'invisible',
-                    itemStyle : placeHolderStyle
-                }
-            ]
+        axisTick: {
+            show: false
         },
-        {
-            name:'Line 4',
-            type:'pie',
-            clockWise:false,
-            hoverAnimation: false,
-            radius : [120, 140],
-            itemStyle : dataStyle,
-
-            data:[
-                {
-                    value:45,
-                    name:'04'
-                },
-                {
-                    value:30,
-                    name:'invisible',
-                    itemStyle : placeHolderStyle
-                }
-            ]
+        data: angleAxisData,
+        z: 10
+    },
+    radiusAxis: {
+        max: 100,
+        min: 0,
+        axisTick: {
+            show: false
         },
-         {
-            name:'Line 5',
-            type:'pie',
-            clockWise: false,
-            hoverAnimation: false,
-            radius : [100, 120],
-            itemStyle : dataStyle,
-
-            data:[
-                {
-                    value:30,
-                    name:'05'
-                },
-                {
-                    value:30,
-                    name:'invisible',
-                    itemStyle : placeHolderStyle
-                }
-            ]
+        axisLine: {
+            show: true,
+            lineStyle: {
+                color: '#6d8a92'
+            }
         },
-
-    ]
-}
+        axisLabel: {
+            formatter: '{value}%',
+            textStyle: {
+                fontSize: 11,
+                color: '#61d9fb',
+                fontFamily: 'Microsoft YaHei'
+            }
+        },
+        splitLine: {
+            show: true,
+            lineStyle: {
+                color: '#6d8a92'
+            }
+        },
+        splitArea: {
+            areaStyle: {
+                color: 'transparent'
+            }
+        }
+    },
+    polar: {
+        center: ['50%', '50%'],
+        radius: '74%',
+    },
+    series: [{
+        type: 'bar',
+        data: arr,
+        itemStyle: {
+            color: function(params) {
+                var colorList = ['#5cc6ca', '#d87a7f', '#f5b97f', '#5ab1ef', '#b6a2de', '#8d98b3', '#e5d02d', '#97b552', '#956f6d', '#d0579c'];
+                return colorList[params.dataIndex];
+            }
+        },
+        coordinateSystem: 'polar',
+    }]
+};
 
 export default option

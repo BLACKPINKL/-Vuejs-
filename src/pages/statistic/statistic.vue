@@ -17,17 +17,17 @@
     </div>
     <div class="col-md-6">
       <v-Card>
-        <v-charts :options="bar"></v-charts>
+        <v-charts :options="bar" :autoresize="true"></v-charts>
       </v-Card>
     </div>
     <div class="col-md-6">
       <v-Card>
-        <v-charts :options="pie"></v-charts>
+        <v-charts :options="pie" :autoresize="true"></v-charts>
       </v-Card>
     </div>
     <div class="col-md-12">
       <v-Card>
-        <v-charts :options="gauge"></v-charts>
+        <v-charts :options="gauge" :autoresize="true"></v-charts>
       </v-Card>
     </div>
   </div>
