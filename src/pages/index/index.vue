@@ -1,14 +1,11 @@
 <template>
   <div id="wrapper">
     <Sidebar/>
-    <div
-      v-if="flag"
-      @click="outSide"
-      class="drawer-bg">
-    </div>
+    <div v-if="flag" @click="outSide" class="drawer-bg"></div>
     <!-- container -->
     <div id="page-wrapper" :style="{'margin-left': getMobile}">
       <Nav-top/>
+      <Router-tabs/>
       <div id="page-inner">
         <Content-title :title="routerName"/>
         <transition name="fade" mode="out-in">
@@ -24,6 +21,7 @@
 <script>
 import NavTop from 'components/_layout/nav-top/nav-top'
 import Sidebar from 'components/_layout/sidebar'
+import RouterTabs from './components/router-tabs'
 import ContentTitle from 'components/_layout/content-title/content-title'
 import {
   mapState,
@@ -35,6 +33,7 @@ import {
     components: {
       NavTop,
       Sidebar,
+      RouterTabs,
       ContentTitle
     },
     name: 'layout',

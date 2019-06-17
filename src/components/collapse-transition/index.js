@@ -1,5 +1,6 @@
 import { addClass, removeClass } from 'utils'
 
+// 抽屉组件
 const Transition = {
     beforeEnter(el) {
       addClass(el, 'collapse-transition')

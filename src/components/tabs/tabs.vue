@@ -4,7 +4,7 @@
     <div class="tabs-bar">
       <div ref="navWrap" :class="navWrapCls">
         <span class="tabs-nav-arrow tabs-nav-prev" v-show="scrollable" @click="handleScrollPrev"><svg-icon iconName="zuojiantou"/></span>
-        <span class="tabs-nav-arrow tabs-nav-next" v-show="scrollable" @click="handleScrollNext"><svg-icon iconName="zuojiantou" iconClass="tabs-nav-arrow-right"/></span>
+        <span class="tabs-nav-arrow tabs-nav-next" v-show="scrollable" @click="handleScrollNext"><svg-icon iconName="zuojiantou" className="tabs-nav-arrow-right"/></span>
         <div class="tabs-nav-scroll">
           <div ref="tabsNav" class="tabs-nav" :style="navStyle">
             <div :class="tabsCls(item)"
@@ -16,7 +16,7 @@
               </template>
               <svg-icon
               @click.native.stop="handleRemove(index)"
-               v-if="closable"
+               v-if="showClose(item)"
                iconName="close"
                iconClass="tabs-tab-close"/>
             </div>
@@ -98,6 +98,9 @@ export default {
       this.activeKey = val
     },
     activeKey(val) {
+      this.$nextTick(() => {
+        this.updateActiveScroll()
+      })
       let i = Math.max(this.getTabIndex(val), 0)
       this.updateVisibility(i)
     }
@@ -133,8 +136,7 @@ export default {
     getCurrentScrollOffset() {
       let style = this.navStyle
       return style.transform ?
-      style.transform.match(/translateX\(-(\d+(\.\d+)*)px\)/[1]) : 0
-
+      Number(style.transform.match(/translateX\(-(\d+(\.\d+)*)px\)/)[1]) : 0
     },
     updateNavList() {
       this.navList = []
@@ -150,6 +152,30 @@ export default {
         }
       })
     },
+    updateActiveScroll() {
+      //
+      if (!this.scrollable) return
+      const tabsNav = this.$refs.tabsNav
+      const activeTab = this.$el.querySelector('.tabs-tab-active')
+      const navWrap = this.$refs.navWrap
+      const tabsNavBounding = tabsNav.getBoundingClientRect()
+      const activeTabBounding = activeTab.getBoundingClientRect()
+      const navWrapBounding = navWrap.getBoundingClientRect()
+      let currentOffset = this.getCurrentScrollOffset()
+      let newOffset = currentOffset
+      if (tabsNavBounding.right < navWrapBounding.right) {
+        newOffset = tabsNav.offsetWidth - navWrapBounding.width
+      }
+      if (activeTabBounding.left < navWrapBounding.left) {
+        newOffset = currentOffset - (navWrapBounding.left - activeTabBounding.left)
+      }else if (activeTabBounding.right > navWrapBounding.right) {
+        newOffset = currentOffset + activeTabBounding.right - navWrapBounding.right
+      }
+
+      if (newOffset !== currentOffset) {
+        this.setOffset(Math.max(newOffset, 0))
+      }
+    },
     updateNavScroll() {
       let navWidth = this.$refs.tabsNav.offsetWidth
       let navWrapWidth = this.$refs.navWrap.offsetWidth
@@ -158,7 +184,8 @@ export default {
         // 说明当前tab宽度超过父容器
         this.scrollable = true
         if (navWidth - currentOffset < navWrapWidth) {
-          this.setOffset(navWidth - navWrapWidth)
+          let newoffset = (navWidth - navWrapWidth) + 30
+          this.setOffset(newoffset)
         }
       } else {
         this.scrollable = false
@@ -211,6 +238,7 @@ export default {
             activeKey = newTabs[0].currentName
           }
         }
+        this.$emit('on-click', activeKey)
         this.activeKey = activeKey
       }
       // 抛出给父组件自行删除内容
@@ -235,7 +263,6 @@ export default {
       let navWidth = this.$refs.tabsNav.offsetWidth
       let navWrapWidth = this.$refs.navWrap.offsetWidth
       let currentOffset = this.getCurrentScrollOffset()
-      console.log(navWidth, navWrapWidth);
       if (navWidth - currentOffset <= navWrapWidth) return
       let newOffset = navWidth - currentOffset > navWrapWidth * 2
           ? currentOffset + navWrapWidth
@@ -247,6 +274,15 @@ export default {
         'tabs-tab',
         {'tabs-tab-active': this.activeKey === nav.name}
       ]
+    },
+    showClose(item) {
+      if (item.closable) {
+        return item.closable
+      }else if(this.closable){
+        return this.closable
+      }else {
+        return false
+      }
     }
   }
 }
@@ -290,9 +326,9 @@ export default {
       &.tabs-nav-next {
         right: 0;
       }
-      &-right {
-        transform: rotate(180deg);
-      }
+    }
+    &-nav-arrow-right {
+      transform: rotate(180deg);
     }
     &-nav-scroll {
       overflow: hidden;
