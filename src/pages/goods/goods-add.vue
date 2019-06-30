@@ -33,7 +33,7 @@
               dropHeight="none"
               :disabled="isDisabled"
               v-model="newProductInfo.parentCategoryId">
-                <virtual-scroll :size="34" :remain="10">
+                <virtual-scroll :size="34" :remain="10" v-if="flag.oneCategoryList">
                   <Option
                     v-for="item in category.oneCategoryList"
                     :value="item.id"
@@ -45,11 +45,11 @@
               <!-- 二级分类  :value="twoCategorySelected()"-->
               <Select
               v-if="isTwoSelected"
-              dropHeight="none"
+              dropHeight="350"
               v-model="newProductInfo.categoryId"
               class="cate-select"
               :disabled="isDisabled">
-              <virtual-scroll :size="34" :remain="8">
+              <virtual-scroll :size="34" :remain="10" v-if="flag.twoCategoryList">
                 <Option
                   :value="item1.id"
                   v-for="item1 in category.twoCategoryList"
@@ -105,14 +105,13 @@
                   </div>
                 </li>
               </ul>
-              <div class="file-upload-box">
+              <div class="file-upload-box" v-if="!isGoodsDetail">
                 <file-upload
                 class="upload-img"
                 :crop="false"
                 @imageuploaded="imageuploaded"
                 url="/manage/product/upload.do"
                 inputOfFile="upload_file"
-                v-if="!isGoodsDetail"
                 />
                 <svg-icon iconName="upload" className="svg-upload"/>
               </div>
@@ -166,6 +165,10 @@ export default {
         oneCategoryList: [],
         twoCategoryList: []
       },
+      flag: {
+        oneCategoryList: false,
+        twoCategoryList: false
+      },
       newProductInfo: {
         categoryId: 0,
         name: '',
@@ -209,6 +212,7 @@ export default {
     loadCategoryList(categoryId, cateName) {
       getCategoryList(categoryId).then((res) => {
         this.category[cateName] = res.data
+          this.flag[cateName] = true
       })
       .catch((err) => {
         this.uTerrTips(err.msg || err.response.message)

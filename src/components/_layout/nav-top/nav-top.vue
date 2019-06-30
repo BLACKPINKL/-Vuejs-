@@ -44,14 +44,10 @@ import Dropdown from 'components/dropdown'
     },
     methods: {
       handleDropdown(name) {
-        if (name === 'dropdLogout') {
-          this.userLogout()
-        }
+        if (name === 'dropdLogout') this.userLogout()
       },
       userLogout() {
-        this.uTconfirmTips('确定退出登录？', () => {
-          this.handlerLogout()
-        })
+        this.uTconfirmTips('确定退出登录？', () => this.handlerLogout())
       },
       handlerLogout() {
         logout().then((res) => {

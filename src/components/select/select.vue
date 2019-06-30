@@ -93,14 +93,14 @@ export default {
       }
     },
     // 外部v-model的值
-    selectedVal: {
-      handler(val) {
-        this.currentSelectedVal = val
-        this.setSelected()
-      }
+    selectedVal(val) {
+      this.currentSelectedVal = val
+      this.setSelected()
     },
     cachedOptions(val) {
-      this.setSelected()
+      this.$nextTick(() => {
+        this.setSelected()
+      })
     }
   },
   data() {

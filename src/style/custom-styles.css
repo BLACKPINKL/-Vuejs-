@@ -41,6 +41,13 @@ button[disabled]:hover,button[disabled]:active, button[disabled]:focus {
   width: 100% !important;
 }
 
+div.v-dialog div.v-dialog-content{
+  overflow: inherit !important;
+}
+div.v-dialog div.v-dialog-body{
+  overflow: inherit !important;
+}
+
 
 h1, .h1, h2, .h2, h3, .h3 {
 margin-top: 7px;

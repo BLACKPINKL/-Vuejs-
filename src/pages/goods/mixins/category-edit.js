@@ -3,7 +3,8 @@ export default {
   created() {
     //do something after creating vue instance
     if(this.$route.name == 'GoodsEdit'){
-      this.loadGoodsEdit({productId: this.$route.params.categoryId})
+      let categoryId = this.$route.params.categoryId
+      this.loadGoodsEdit({productId: categoryId})
       this.loadCategoryList(this.newProductInfo.parentCategoryId, 'oneCategoryList')
     }
   },
@@ -16,10 +17,10 @@ export default {
     // 渲染编辑商品页
     loadGoodsEdit(productId) {
       getGoodsEdit(productId).then((res) => {
-        console.log(res);
         this.newProductInfo = res.data
         // 把保存图片的字段转成数组
         this.newProductInfo.subImages = this.newProductInfo.subImages.split(',')
+        this.uploadImg = this.newProductInfo.subImages
       })
       .catch((err) => {
         this.uTerrTips(err.msg || err.response.message)
@@ -41,10 +42,7 @@ export default {
   },
   computed: {
     isGoodsEdit() {
-      if (this.$route.name == 'GoodsEdit') {
-        return true
-      }
-      return false
+      return this.$route.name == 'GoodsEdit'
     }
   }
 }
