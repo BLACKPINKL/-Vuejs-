@@ -243,6 +243,16 @@ export default {
 </script>
 
 <style lang="less">
+div.v-dialog{
+  div.v-dialog-content {
+    overflow: inherit;
+  }
+}
+div.v-dialog{
+  div.v-dialog-body {
+    overflow: inherit;
+  }
+}
 .goods-category-from {
   margin-bottom: 15px;
 }

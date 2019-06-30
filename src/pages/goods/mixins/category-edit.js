@@ -16,6 +16,7 @@ export default {
     // 渲染编辑商品页
     loadGoodsEdit(productId) {
       getGoodsEdit(productId).then((res) => {
+        console.log(res);
         this.newProductInfo = res.data
         // 把保存图片的字段转成数组
         this.newProductInfo.subImages = this.newProductInfo.subImages.split(',')

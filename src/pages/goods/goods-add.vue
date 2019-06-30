@@ -27,30 +27,37 @@
           <div class="form-group">
             <label class="col-md-2 control-label">所属分类</label>
             <div class="col-md-10">
-              <select class="form-control cate-select"
-              v-model="newProductInfo.parentCategoryId"
-              :disabled="isDisabled">
-                <option disabled value="0">请选择一级分类</option>
-                <option
-                :value="item.id"
-                v-for="(item, index) in category.oneCategoryList"
-                :key="index"
-                :selected="item.id == newProductInfo.parentCategoryId">
-                {{ item.name }}
-              </option>
-              </select>
-              <select
-              v-show="isTwoSelected"
+              <!-- 一级分类 :value="oneCategorySelected()" v-model="newProductInfo.parentCategoryId"-->
+              <Select
+              class="cate-select"
+              dropHeight="none"
+              :disabled="isDisabled"
+              v-model="newProductInfo.parentCategoryId">
+                <virtual-scroll :size="34" :remain="10">
+                  <Option
+                    v-for="item in category.oneCategoryList"
+                    :value="item.id"
+                    :key="item.id">
+                    {{ item.name }}
+                  </Option>
+                </virtual-scroll>
+              </Select>
+              <!-- 二级分类  :value="twoCategorySelected()"-->
+              <Select
+              v-if="isTwoSelected"
+              dropHeight="none"
               v-model="newProductInfo.categoryId"
-              class="form-control cate-select"
+              class="cate-select"
               :disabled="isDisabled">
-                <option value="0" disabled>请选择二级分类</option>
-                <option
-                :value="item1.id"
-                v-for="(item1, index2) in category.twoCategoryList"
-                :key="index2"
-                :selected="item1.id === newProductInfo.categoryId">{{item1.name}}</option>
-              </select>
+              <virtual-scroll :size="34" :remain="8">
+                <Option
+                  :value="item1.id"
+                  v-for="item1 in category.twoCategoryList"
+                  :key="item1.id">
+                  {{item1.name}}
+                </Option>
+                </virtual-scroll>
+              </Select>
             </div>
           </div>
           <div class="form-group">
@@ -82,7 +89,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label for="" class="col-md-2 control-label">商品图片</label>
+            <label class="col-md-2 control-label">商品图片</label>
             <div class="col-md-10">
               <ul class="uploadImgBox">
                 <li v-for="(item, index) in uploadImg"
@@ -94,7 +101,7 @@
                   <div class="imgMask"
                   @click="removeUploadImg(index)"
                   v-if="!isGoodsDetail">
-                    <svg-icon iconName="close" className="svg-close"></svg-icon>
+                    <svg-icon iconName="close" className="svg-close"/>
                   </div>
                 </li>
               </ul>
@@ -106,13 +113,13 @@
                 url="/manage/product/upload.do"
                 inputOfFile="upload_file"
                 v-if="!isGoodsDetail"
-                ></file-upload>
-                <svg-icon iconName="upload" className="svg-upload"></svg-icon>
+                />
+                <svg-icon iconName="upload" className="svg-upload"/>
               </div>
             </div>
           </div>
           <div class="form-group">
-            <label for="" class="col-md-2 control-label">商品详情</label>
+            <label class="col-md-2 control-label">商品详情</label>
             <editor
             :uploadPath="uploadPath"
             :uploadFileName="uploadFileName"
@@ -143,11 +150,13 @@ import categoryDetail from './mixins/category-detail'
 import {checkNewGoodsInfo, saveNewGoods} from 'service/goods-service'
 import {getCategoryList} from 'service/category-service'
 import VueCoreImageUpload from 'vue-core-image-upload'
+import virtualScroll from 'vue-virtual-scroll-list'
 import editor from 'components/editor/editor'
 export default {
   components: {
     fileUpload: VueCoreImageUpload,
-    editor
+    editor,
+    virtualScroll
   },
   name: 'goods-add',
   mixins: [categoryEdit, categoryDetail],
@@ -168,7 +177,6 @@ export default {
         status: 1,
         parentCategoryId: 0
       },
-      twoSelected: false,
       uploadPath: '/manage/product/richtext_img_upload.do',
       uploadFileName: 'upload_file',
       editorUploadImg: '',
@@ -187,7 +195,7 @@ export default {
   created() {
     // 根据路由名称进行判断
     // 如果是 /goods/add 则渲染添加商品页
-    if (this.$route.name == 'GoodsAdd') {
+    if (this.$route.name === 'GoodsAdd') {
       this.loadCategoryList(this.newProductInfo.parentCategoryId, 'oneCategoryList')
     }
   },
@@ -234,6 +242,7 @@ export default {
     },
     // 删除uploadImg
     removeUploadImg(index) {
+      this.uploadImg.splice(index, 1)
       this.newProductInfo.subImages.splice(index, 1)
     },
     // 富文本图片上传成功回调
@@ -244,10 +253,7 @@ export default {
   computed: {
     // 判断一级分类是否被选中 如果选择 返回true
     isTwoSelected() {
-      return this.newProductInfo.parentCategoryId ?
-      this.twoSelected = true
-      :
-      this.twoSelected = false
+      return this.newProductInfo.parentCategoryId ? true: false
     },
     getEditorHtml() {
       return this.newProductInfo.detail
@@ -257,5 +263,91 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  @import './goods-add.less';
+
+.form-control {
+  width: 100%;
+  &:focus {
+    border: 1px solid #1cc09f;
+  }
+  &:disabled {
+    cursor: not-allowed;
+  }
+  [readonly] {
+    cursor: not-allowed;
+  }
+}
+.cate-select {
+  width: 220px;
+  margin-right: 10px;
+}
+
+.file-upload-box {
+  position: relative;
+  border-radius: 5px;
+  width: 100px;
+  height: 100px;
+  border: 1px solid #d7d7d7;
+  background-color: #f8f8f8;
+  overflow: hidden;
+  transition: border-color .25s;
+  &:hover {
+    border-color: #1cc09f;
+  }
+  .upload-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    color: transparent;
+    z-index: 30;
+  }
+  .svg-upload {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    font-size: 50px;
+  }
+}
+.uploadImgBox {
+  padding: 0;
+  margin-bottom: 10px;
+  overflow: hidden;
+  li {
+    float: left;
+    list-style: none;
+    width: 100px;
+    height: 100px;
+    position: relative;
+    margin-right: 10px;
+    .uploadImg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    .imgMask {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      .svg-close {
+        display: none;
+        font-size: 30px;
+      }
+      &:hover {
+        cursor: pointer;
+        background-color: rgba(0,0,0,.3);
+        .svg-close {
+          display: block;
+          fill: #fff;
+        }
+      }
+    }
+  }
+}
 </style>

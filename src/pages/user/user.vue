@@ -6,11 +6,11 @@
           <div class="col-sm-6">
             <label class="page-option">
               Show
-              <select @input="getPageSize" class="form-control input-sm">
-                <option value="10">10</option>
-                <option value="15">15</option>
-                <option value="20">20</option>
-              </select>
+              <Select @on-change="getPageSize" v-model="currentPage">
+                <Option value="10">10</Option>
+                <Option value="15">15</Option>
+                <Option value="20">20</Option>
+              </Select>
               entries
             </label>
           </div>
@@ -39,9 +39,8 @@
 </template>
 
 <script>
-// import table from 'components/table-list/table-list'
 import Table from 'components/table'
-import { getUserList, test } from 'service/user-service'
+import { getUserList } from 'service/user-service'
 import {
   mapState,
   mapMutations,
@@ -61,7 +60,8 @@ import {
           { key: 'phone', title: '电话', align: 'center' },
           { key: 'createTime', title: '注册时间', align: 'center', width: 170 }
         ],
-        userData: {}
+        userData: {},
+        currentPage: 10
       }
     },
     created() {
@@ -71,7 +71,6 @@ import {
       loadUserList(page) {
         getUserList(page).then((res) => {
           this.userData = Object.freeze(res.data)
-          // this.userData = res.data
           // 修改总页数
           this.setPageTotal(this.userData.pages)
         })
@@ -85,8 +84,8 @@ import {
         this.loadUserList(this.page)
       },
       // select 改变pageSize
-      getPageSize(e) {
-        this.setPageSize(e.target.value)
+      getPageSize(val) {
+        this.setPageSize(val)
         this.loadUserList(this.page)
       },
       // 获取修改state数据的方法
@@ -106,12 +105,5 @@ import {
     text-align: left;
     font-weight: normal;
     font-size: 13px;
-    select {
-      width: 75px;
-      display: inline-block;
-      &:focus {
-        border: 1px solid #1cc09f;
-      }
-    }
   }
 </style>

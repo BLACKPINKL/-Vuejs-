@@ -4,30 +4,30 @@
       <div class="count-body"
       v-for="(item, index) in countList"
       :key="index">
-        <div class="body-left"><svg-icon :iconName="item.icon"></svg-icon></div>
+        <div class="body-left"><svg-icon :iconName="item.icon"/></div>
         <div class="body-right">
           <count-to
-           :startVal='item.startVal'
-           :endVal='item.endVal'
-           :duration='item.duration'
-           ></count-to>
+           :startVal="item.startVal"
+           :endVal="item.endVal"
+           :duration="item.duration"
+           />
           <p>{{item.name}}</p>
         </div>
       </div>
     </div>
     <div class="col-md-6">
       <v-Card>
-        <v-charts :options="bar" :autoresize="true"></v-charts>
+        <v-charts :options="bar" :autoresize="true"/>
       </v-Card>
     </div>
     <div class="col-md-6">
       <v-Card>
-        <v-charts :options="pie" :autoresize="true"></v-charts>
+        <v-charts :options="pie" :autoresize="true"/>
       </v-Card>
     </div>
     <div class="col-md-12">
       <v-Card>
-        <v-charts :options="gauge" :autoresize="true"></v-charts>
+        <v-charts :options="gauge" :autoresize="true"/>
       </v-Card>
     </div>
   </div>
@@ -59,9 +59,9 @@ import CountTo from 'vue-count-to'
     data() {
       return {
         countList: [
-          { startVal: 0, endVal: 100, duration: 3000, name: '用户总数', icon: 'yonghu' },
-          { startVal: 0, endVal: 100, duration: 2000, name: '商品总数', icon: 'shangpin' },
-          { startVal: 0, endVal: 110, duration: 1000, name: '订单总数', icon: 'wodedingdan' }
+          { startVal: 0, endVal: 500, duration: 3000, name: '用户总数', icon: 'yonghu' },
+          { startVal: 0, endVal: 500, duration: 2000, name: '商品总数', icon: 'shangpin' },
+          { startVal: 0, endVal: 550, duration: 1000, name: '订单总数', icon: 'wodedingdan' }
         ],
         baseCount: {},
         baseCountKeys: [],

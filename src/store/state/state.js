@@ -10,7 +10,6 @@ export default {
   routerName: '',
   // 侧边栏切换
   navbarToggle: true,
-  dropdown: false,
   loading: true,
   navsideWidth: '260px',
   // 需要缓存的路由name

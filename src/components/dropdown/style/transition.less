@@ -1,0 +1,55 @@
+@keyframes transitionDropIn {
+    0% {
+        opacity: 0;
+        transform: scaleY(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+}
+
+@keyframes transitionDropOut {
+    0% {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scaleY(0.8);
+    }
+}
+
+.motion-common() {
+    animation-duration: .3s;
+    animation-fill-mode: both;
+}
+
+.make-motion(@className, @keyframeName) {
+    .@{className}-enter-active, .@{className}-appear {
+        .motion-common();
+        animation-play-state: paused;
+    }
+    .@{className}-leave-active {
+        .motion-common();
+        animation-play-state: paused;
+    }
+    .@{className}-enter-active, .@{className}-appear {
+        animation-name: ~"@{keyframeName}In";
+        animation-play-state: running;
+    }
+    .@{className}-leave-active {
+        animation-name: ~"@{keyframeName}Out";
+        animation-play-state: running;
+    }
+}
+.slide-motion(@className, @keyframeName) {
+    .make-motion(@className, @keyframeName);
+    .@{className}-enter-active, .@{className}-appear {
+        opacity: 0;
+        animation-timing-function: ease-in-out;
+    }
+    .@{className}-leave-active {
+        animation-timing-function: ease-in-out;
+    }
+}

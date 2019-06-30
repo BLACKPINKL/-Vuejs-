@@ -1,0 +1,52 @@
+@import "transition";
+@prefixCls: dropdown;
+
+.@{prefixCls} {
+  &-rel {
+    position: relative;
+  }
+  &-drop {
+    width: inherit;
+    position: absolute;
+    z-index: 1000;
+    padding: 5px 0;
+    max-height: 200px;
+    overflow: auto;
+    margin: 5px 0;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 6px rgba(0,0,0,.2);
+  }
+  .@{prefixCls}-drop {
+    max-height: none;
+    overflow: visible;
+  }
+  &-menus {
+    min-width: 100px;
+    padding: 0;
+    margin: 0;
+  }
+  &-item {
+    white-space: nowrap;
+    padding: 7px 16px;
+    cursor: pointer;
+    background: #fff;
+    transition: background .25s ease-in-out;
+    clear: both;
+    color: #515a6e;
+    &:hover {
+      background: #efeeee;
+    }
+    &-disabled {
+      color: #c5c8ce;
+      cursor: not-allowed;
+    }
+    &-selected {
+      color: rgb(28, 192, 159);
+    }
+  }
+}
+
+
+
+.slide-motion(transition-drop, transitionDrop);

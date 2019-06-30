@@ -4,18 +4,17 @@
     <!-- 商品搜索 -->
     <div class="row goods-from">
       <div class="col-md-6">
-          <select class="form-control" v-model="selected">
-            <option disabled value="">请选择</option>
-            <option :value="id">按商品ID查询</option>
-            <option :value="name">按商品名称查询</option>
-          </select>
-          <input type="text" class="form-control" v-model.trim="searchVal" placeholder="输入ID或名称">
-          <Button
-            @click.native="searchProduct"
-            type="success">
-            <svg-icon iconName="chaxun"/>
-            搜索
-          </Button>
+        <Select v-model="selected" style="width: 150px">
+          <Option :value="id">按商品ID查询</Option>
+          <Option :value="name">按商品名称查询</Option>
+        </Select>
+        <input type="text" class="form-control" v-model.trim="searchVal" placeholder="输入ID或名称">
+        <Button
+          @click.native="searchProduct"
+          type="success">
+          <svg-icon iconName="chaxun"/>
+          搜索
+        </Button>
       </div>
       <div class="col-md-6">
         <div style="text-align: right">

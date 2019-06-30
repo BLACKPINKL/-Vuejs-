@@ -3,10 +3,10 @@
 const common = {
   methods: {
     uTdoLogin() {
-      this.$router.push('/login')
+      this.$router.push({path: '/login'})
     },
     uTgohome() {
-      this.$router.push('/')
+      this.$router.push({path:'/'})
     },
     // 只负责弹出错误信息或成功信息  ( 无操作逻辑 )
     uTerrTips(msg) {

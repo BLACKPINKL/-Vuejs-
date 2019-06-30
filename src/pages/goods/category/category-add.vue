@@ -4,13 +4,16 @@
       <div class="from-item">
         <label for="" class="from-item-label">所属品类</label>
           <div class="from-item-content">
-            <select class="from-item-select" v-model="parentId">
-              <option value="">/ 所有</option>
-              <option v-for="(item, index) in categoryList"
-               :key="index"
-               :value="item.id"
-               >/ 所有 {{ item.name }}</option>
-            </select>
+            <Select v-model="parentId"
+            dropHeight="none">
+              <virtual-scroll :size="34" :remain="10">
+                <Option v-for="(item, index) in categoryList"
+                 :key="item.id"
+                 :value="item.id"
+                 >/ 所有 {{ item.name }}
+                </Option>
+               </virtual-scroll>
+            </Select>
           </div>
       </div>
     <div class="from-item">
@@ -33,6 +36,7 @@
 </template>
 
 <script>
+import virtualScroll from 'vue-virtual-scroll-list'
 import {getCategoryList, vaildateAddCate} from 'service/category-service'
 export default {
   data() {
@@ -43,6 +47,12 @@ export default {
     }
   },
   name: 'category-add',
+  components: {
+    virtualScroll
+  },
+  created() {
+    this.loadCategoryList()
+  },
   methods: {
     loadCategoryList(categoryId) {
       getCategoryList(categoryId).then((res) => {
@@ -72,7 +82,6 @@ export default {
 
 <style lang="less">
 .from {
-  // mixin
   .from-components-base(@color, @border-color) {
     display: inline-block;
     width: 100%;
@@ -86,8 +95,6 @@ export default {
       border-color: @border-color;
     }
   }
-  // mixin end
-
   margin: 0 auto;
   width: 60%;
   &-item {

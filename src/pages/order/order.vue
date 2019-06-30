@@ -3,9 +3,9 @@
     <v-Card>
     <div class="row order-from">
       <div class="col-md-12">
-        <select class="form-control">
-          <option>按订单号查询</option>
-        </select>
+        <Select style="width: 150px">
+          <Option>按订单号查询</Option>
+        </Select>
         <input v-model="orderNo" type="text" class="form-control">
         <Button
           @click.native="handlerSearchOrder"

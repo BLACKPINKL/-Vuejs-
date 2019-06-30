@@ -1,48 +1,50 @@
 <template>
   <nav class="navbar navbar-default top-navbar" :style="{width: getNavTopWidth}">
     <ul class="navbar-top-links">
-      <!-- 侧边栏 toggle -->
       <li class="hamburger-container" @click.stop="navSideToggle">
-        <svg-icon iconName="bars"/>
+        <svg-icon iconName="bars" className="bars"/>
       </li>
-      <!-- end -->
-      <li class="dropdown navbar-links" @click.stop="handleDropdown">
-        <a class="dropdown-toggle" href="javascript:;">
-          <svg-icon iconName="dengchu"/> <svg-icon iconName="zuojiantou" className="arrow-rotate"/>
-        </a>
-        <Collapse-transition>
-          <ul class="dropdown-menu dropdown-user" v-show="dropdown">
-            <li><a href="https://github.com/BLACKPINKL" target="_blank"><svg-icon iconName="github"></svg-icon> My Github</a>
-            </li>
-            <li class="divider"></li>
-            <li>
-              <a href="javascript:;" ref="dropdLogout">
-                <svg-icon iconName="dengchu"/>退出登录
+      <Dropdown @on-click="handleDropdown">
+        <li class="navbar-links">
+          <a href="javascript:;">
+            <svg-icon iconName="dengchu"/>
+            <svg-icon
+              iconName="zuojiantou"
+              className="arrow-rotate"/>
+          </a>
+        </li>
+          <Dropdown-menu slot="list">
+            <Dropdown-item name="dropGithub">
+              <a href="https://github.com/BLACKPINKL" target="_blank">
+                <svg-icon iconName="github"/> Github
               </a>
-            </li>
-          </ul>
-        </Collapse-transition>
-          <!-- /.dropdown-user -->
-      </li>
-        <!-- /.dropdown -->
+            </Dropdown-item>
+            <Dropdown-item name="dropdLogout">
+              <span>
+                <svg-icon iconName="dengchu"/> 退出登录
+              </span>
+            </Dropdown-item>
+          </Dropdown-menu>
+      </Dropdown>
     </ul>
 </nav>
 </template>
 
 <script>
-import {logout} from 'service/user-service'
+import { logout } from 'service/user-service'
 import { mapState, mapGetters, mapMutations } from 'vuex'
 import { uTremoveUserInfo } from 'utils/cookie'
-import CollapseTransition from '../../collapse-transition'
+import Dropdown from 'components/dropdown'
   export default {
     name: 'nav-top',
     components: {
-      CollapseTransition
+      Dropdown,
+      DropdownMenu: Dropdown.menu,
+      DropdownItem: Dropdown.item
     },
     methods: {
-      handleDropdown(e) {
-        this.toggleDropdown()
-        if (e.target === this.$refs.dropdLogout) {
+      handleDropdown(name) {
+        if (name === 'dropdLogout') {
           this.userLogout()
         }
       },
@@ -68,11 +70,11 @@ import CollapseTransition from '../../collapse-transition'
         }
         this.setNavbarToggle()
       },
-      ...mapMutations(['setNavsideWidth', 'setNavbarToggle', 'toggleDropdown'])
+      ...mapMutations(['setNavsideWidth', 'setNavbarToggle'])
     },
     computed: {
       ...mapGetters(['getIsMobile']),
-      ...mapState(['navsideWidth', 'navbarToggle', 'dropdown']),
+      ...mapState(['navsideWidth', 'navbarToggle']),
       getNavTopWidth() {
         if (this.getIsMobile) {
           return '100%'

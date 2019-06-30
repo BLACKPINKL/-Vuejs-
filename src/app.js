@@ -20,6 +20,7 @@ import Card from 'components/_layout/card/card'
 import SvgIcon from 'components/_layout/icon-svg/icon-svg'
 import Button from 'components/button'
 import Tag from 'components/tag'
+import Select from 'components/select'
 
 Vue.use(Vuex)
 Vue.use(vDialogs, { dialogMaxButton: false })
@@ -34,6 +35,8 @@ Vue.component('v-Card', Card)
 Vue.component('Button', Button)
 Vue.component('Tag', Tag)
 Vue.component('Pagination', Pagination)
+Vue.component('Select', Select)
+Vue.component('Option', Select.option)
 
 // NProgress 配置
 NProgress.configure({ showSpinner: false })
@@ -42,7 +45,12 @@ NProgress.configure({ showSpinner: false })
 router.beforeEach((to, from, next) => {
   NProgress.start()
   if (to.path === '/login') {
-    next()
+    if (uTgetUserInfo('userInfo')) {
+      next({path: '/'})
+      NProgress.done()
+    }else {
+      next()
+    }
   }
   else {
     if (uTgetUserInfo('userInfo')) {
